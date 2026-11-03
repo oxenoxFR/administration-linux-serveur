@@ -1,0 +1,18 @@
+
+$ tcpdump -nner /root/TP1/captures/vlan42.pcap
+reading from file /root/TP1/captures/vlan42.pcap, link-type EN10MB (Ethernet), snapshot length 262144
+dropped privs to tcpdump
+17:27:25.523570 08:00:27:70:47:6d > ff:ff:ff:ff:ff:ff, ethertype 802.1Q (0x8100), length 46: vlan 42, p 0, ethertype ARP (0x0806), Request who-has 10.42.42.11 tell 10.42.42.10, length 28
+17:27:25.526136 08:00:27:fc:89:49 > 08:00:27:70:47:6d, ethertype 802.1Q (0x8100), length 64: vlan 42, p 0, ethertype ARP (0x0806), Reply 10.42.42.11 is-at 08:00:27:fc:89:49, length 46
+17:27:25.526146 08:00:27:70:47:6d > 08:00:27:fc:89:49, ethertype 802.1Q (0x8100), length 102: vlan 42, p 0, ethertype IPv4 (0x0800), 10.42.42.10 > 10.42.42.11: ICMP echo request, id 3, seq 1, length 64
+17:27:25.527028 08:00:27:fc:89:49 > 08:00:27:70:47:6d, ethertype 802.1Q (0x8100), length 102: vlan 42, p 0, ethertype IPv4 (0x0800), 10.42.42.11 > 10.42.42.10: ICMP echo reply, id 3, seq 1, length 64
+17:27:26.525871 08:00:27:70:47:6d > 08:00:27:fc:89:49, ethertype 802.1Q (0x8100), length 102: vlan 42, p 0, ethertype IPv4 (0x0800), 10.42.42.10 > 10.42.42.11: ICMP echo request, id 3, seq 2, length 64
+
+$ tcpdump -nner /root/TP1/captures/vlan42.pcap
+reading from file /root/TP1/captures/vlan42.pcap, link-type EN10MB (Ethernet), snapshot length 262144
+dropped privs to tcpdump
+17:31:55.627851 08:00:27:70:47:6d > ff:ff:ff:ff:ff:ff, ethertype 802.1Q (0x8100), length 46: vlan 42, p 0, ethertype ARP (0x0806), Request who-has 10.42.42.10 tell 10.42.42.10, length 28
+17:31:55.744061 08:00:27:70:47:6d > ff:ff:ff:ff:ff:ff, ethertype 802.1Q (0x8100), length 46: vlan 42, p 0, ethertype ARP (0x0806), Request who-has 10.42.42.11 tell 10.42.42.10, length 28
+17:31:55.744957 08:00:27:fc:89:49 > 08:00:27:70:47:6d, ethertype 802.1Q (0x8100), length 64: vlan 42, p 0, ethertype ARP (0x0806), Reply 10.42.42.11 is-at 08:00:27:fc:89:49, length 46
+17:31:55.744967 08:00:27:70:47:6d > 08:00:27:fc:89:49, ethertype 802.1Q (0x8100), length 102: vlan 42, p 0, ethertype IPv4 (0x0800), 10.42.42.10 > 10.42.42.11: ICMP echo request, id 6, seq 1, length 64
+17:31:55.745899 08:00:27:fc:89:49 > 08:00:27:70:47:6d, ethertype 802.1Q (0x8100), length 102: vlan 42, p 0, ethertype IPv4 (0x0800), 10.42.42.11 > 10.42.42.10: ICMP echo reply, id 6, seq 1, length 64

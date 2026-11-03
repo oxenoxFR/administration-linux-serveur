@@ -1,0 +1,189 @@
+
+$ systemctl show -p MainPID -p NRestarts helios-collect.service
+MainPID=2085
+NRestarts=0
+
+$ kill -9 2085
+
+$ systemctl status helios-collect.service --no-pager | head -5
+● helios-collect.service - Collecteur de telemetrie Helios
+     Loaded: loaded (/etc/systemd/system/helios-collect.service; enabled; preset: disabled)
+     Active: active (running) since Mon 2026-11-02 17:17:17 CET; 2s ago
+       Docs: https://wiki.helios.lan/collect
+   Main PID: 2127 (helios-collect.)
+
+$ systemctl show -p MainPID -p NRestarts helios-collect.service
+MainPID=2127
+NRestarts=1
+
+$ journalctl -u helios-collect.service -n 8 --no-pager
+nov. 02 17:17:10 srv-core systemd[1]: Started Collecteur de telemetrie Helios.
+nov. 02 17:17:12 srv-core systemd[1]: helios-collect.service: Main process exited, code=killed, status=9/KILL
+nov. 02 17:17:12 srv-core systemd[1]: helios-collect.service: Failed with result 'signal'.
+nov. 02 17:17:17 srv-core systemd[1]: helios-collect.service: Scheduled restart job, restart counter is at 1.
+nov. 02 17:17:17 srv-core systemd[1]: Stopped Collecteur de telemetrie Helios.
+nov. 02 17:17:17 srv-core systemd[1]: Started Collecteur de telemetrie Helios.
+
+### Drop-in override.conf — 2026-11-02 17:17:20
+
+$ systemctl cat helios-collect.service
+# /etc/systemd/system/helios-collect.service
+[Unit]
+Description=Collecteur de telemetrie Helios
+Documentation=https://wiki.helios.lan/collect
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=helios
+Group=helios
+Environment=HELIOS_INTERVAL=15
+ExecStart=/usr/local/sbin/helios-collect.sh
+Restart=on-failure
+RestartSec=5s
+TimeoutStopSec=20s
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/var/lib/helios /var/log/helios
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+CapabilityBoundingSet=
+
+[Install]
+WantedBy=multi-user.target
+
+# /etc/systemd/system/helios-collect.service.d/override.conf
+[Service]
+Environment=HELIOS_INTERVAL=5
+CPUQuota=20%
+MemoryMax=96M
+IOWeight=50
+Nice=5
+
+$ systemctl restart helios-collect.service
+
+$ systemctl show -p CPUQuotaPerSecUSec -p MemoryMax -p Nice -p IOWeight -p Environment helios-collect.service
+CPUQuotaPerSecUSec=200ms
+IOWeight=50
+MemoryMax=100663296
+Environment=HELIOS_INTERVAL=5
+Nice=5
+
+$ systemd-cgls --no-pager /system.slice/helios-collect.service
+Control group /system.slice/helios-collect.service:
+├─2197 /usr/bin/bash /usr/local/sbin/helios-collect.sh
+└─2209 date --iso-8601=seconds
+
+$ systemd-cgtop -b --iterations=3
+/                                                            133      -   336.2M        -        -
+dev-hugepages.mount                                            -      -     4.0K        -        -
+dev-mqueue.mount                                               -      -    52.0K        -        -
+init.scope                                                     1      -    37.8M        -        -
+sys-fs-fuse-connections.mount                                  -      -     4.0K        -        -
+sys-kernel-config.mount                                        -      -     4.0K        -        -
+sys-kernel-debug.mount                                         -      -     4.0K        -        -
+sys-kernel-tracing.mount                                       -      -     4.0K        -        -
+system.slice                                                  21      -   142.1M        -        -
+system.slice/NetworkManager.service                            3      -    17.4M        -        -
+system.slice/auditd.service                                    2      -     4.8M        -        -
+system.slice/boot.mount                                        -      -     8.0K        -        -
+system.slice/chronyd.service                                   1      -     2.6M        -        -
+system.slice/crond.service                                     1      -     1.0M        -        -
+system.slice/dbus-broker.service                               2      -     2.2M        -        -
+system.slice/dev-mapper-rl\x2dswap.swap                        -      -   164.0K        -        -
+system.slice/helios-collect.service                            2      -   544.0K        -        -
+system.slice/irqbalance.service                                2      -     1.0M        -        -
+system.slice/rsyslog.service                                   3      -     4.3M        -        -
+system.slice/sshd.service                                      1      -     5.8M        -        -
+system.slice/sysroot.mount                                     -      -     4.0K        -        -
+system.slice/system-getty.slice                                -      -     2.9M        -        -
+system.slice/system-getty.slice/getty@tty1.service             -      -     2.9M        -        -
+system.slice/system-modprobe.slice                             -      -   676.0K        -        -
+system.slice/system-systemd\x2dhibernate\x2dresume.slice       -      -     4.0K        -        -
+system.slice/systemd-hostnamed.service                         1      -     2.6M        -        -
+system.slice/systemd-journald.service                          1      -     1.9M        -        -
+system.slice/systemd-logind.service                            1      -     3.3M        -        -
+system.slice/systemd-udevd.service                             1      -    17.3M        -        -
+user.slice                                                    16      -    21.7M        -        -
+user.slice/user-1000.slice                                    16      -    21.7M        -        -
+user.slice/user-1000.slice/session-1.scope                    11      -    13.0M        -        -
+user.slice/user-1000.slice/session-3.scope                     3      -     1.8M        -        -
+user.slice/user-1000.slice/user@1000.service                   2      -     6.7M        -        -
+
+/                                                            133    6.5   335.6M       0B    22.0K
+system.slice                                                  21    2.0   142.5M        -        -
+user.slice                                                    16    2.0    21.6M        -        -
+user.slice/user-1000.slice                                    16    2.0    21.5M        -        -
+user.slice/user-1000.slice/session-1.scope                    11    2.0    12.9M        -        -
+system.slice/helios-collect.service                            2    1.9   676.0K        -        -
+system.slice/NetworkManager.service                            3    0.1    17.4M        -        -
+system.slice/rsyslog.service                                   3    0.0     4.6M        -        -
+system.slice/systemd-journald.service                          1    0.0     1.9M        -        -
+dev-hugepages.mount                                            -      -     4.0K        -        -
+dev-mqueue.mount                                               -      -    52.0K        -        -
+init.scope                                                     1      -    37.8M        -        -
+sys-fs-fuse-connections.mount                                  -      -     4.0K        -        -
+sys-kernel-config.mount                                        -      -     4.0K        -        -
+sys-kernel-debug.mount                                         -      -     4.0K        -        -
+sys-kernel-tracing.mount                                       -      -     4.0K        -        -
+system.slice/auditd.service                                    2      -     4.8M        -        -
+system.slice/boot.mount                                        -      -     8.0K        -        -
+system.slice/chronyd.service                                   1      -     2.6M        -        -
+system.slice/crond.service                                     1      -     1.0M        -        -
+system.slice/dbus-broker.service                               2      -     2.2M        -        -
+system.slice/dev-mapper-rl\x2dswap.swap                        -      -   164.0K        -        -
+system.slice/irqbalance.service                                2      -     1.0M        -        -
+system.slice/sshd.service                                      1      -     5.8M        -        -
+system.slice/sysroot.mount                                     -      -     4.0K        -        -
+system.slice/system-getty.slice                                -      -     2.9M        -        -
+system.slice/system-getty.slice/getty@tty1.service             -      -     2.9M        -        -
+system.slice/system-modprobe.slice                             -      -   676.0K        -        -
+system.slice/system-systemd\x2dhibernate\x2dresume.slice       -      -     4.0K        -        -
+system.slice/systemd-hostnamed.service                         1      -     2.6M        -        -
+system.slice/systemd-logind.service                            1      -     3.3M        -        -
+system.slice/systemd-udevd.service                             1      -    17.3M        -        -
+user.slice/user-1000.slice/session-3.scope                     3      -     1.8M        -        -
+user.slice/user-1000.slice/user@1000.service                   2      -     6.7M        -        -
+
+/                                                            133    4.0   335.4M       0B     7.8K
+user.slice                                                    16    2.1    21.8M        -        -
+user.slice/user-1000.slice                                    16    2.1    21.8M        -        -
+user.slice/user-1000.slice/session-1.scope                    11    2.1    13.1M        -        -
+system.slice                                                  21    0.1   142.3M        -        -
+system.slice/NetworkManager.service                            3    0.0    17.4M        -        -
+system.slice/rsyslog.service                                   3    0.0     4.3M        -        -
+dev-hugepages.mount                                            -      -     4.0K        -        -
+dev-mqueue.mount                                               -      -    52.0K        -        -
+init.scope                                                     1      -    37.8M        -        -
+sys-fs-fuse-connections.mount                                  -      -     4.0K        -        -
+sys-kernel-config.mount                                        -      -     4.0K        -        -
+sys-kernel-debug.mount                                         -      -     4.0K        -        -
+sys-kernel-tracing.mount                                       -      -     4.0K        -        -
+system.slice/auditd.service                                    2      -     4.8M        -        -
+system.slice/boot.mount                                        -      -     8.0K        -        -
+system.slice/chronyd.service                                   1      -     2.6M        -        -
+system.slice/crond.service                                     1      -     1.0M        -        -
+system.slice/dbus-broker.service                               2      -     2.2M        -        -
+system.slice/dev-mapper-rl\x2dswap.swap                        -      -   164.0K        -        -
+system.slice/helios-collect.service                            2      -   676.0K        -        -
+system.slice/irqbalance.service                                2      -     1.0M        -        -
+system.slice/sshd.service                                      1      -     5.8M        -        -
+system.slice/sysroot.mount                                     -      -     4.0K        -        -
+system.slice/system-getty.slice                                -      -     2.9M        -        -
+system.slice/system-getty.slice/getty@tty1.service             -      -     2.9M        -        -
+system.slice/system-modprobe.slice                             -      -   676.0K        -        -
+system.slice/system-systemd\x2dhibernate\x2dresume.slice       -      -     4.0K        -        -
+system.slice/systemd-hostnamed.service                         1      -     2.6M        -        -
+system.slice/systemd-journald.service                          1      -     1.9M        -        -
+system.slice/systemd-logind.service                            1      -     3.3M        -        -
+system.slice/systemd-udevd.service                             1      -    17.3M        -        -
+user.slice/user-1000.slice/session-3.scope                     3      -     1.8M        -        -
+user.slice/user-1000.slice/user@1000.service                   2      -     6.7M        -        -
+
+$ ps -o pid,ni,comm -p $(systemctl show -p MainPID --value helios-collect.service)
+    PID  NI COMMAND
+   2197   5 helios-collect.

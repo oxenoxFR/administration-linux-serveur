@@ -1,0 +1,74 @@
+
+$ systemd-analyze verify /etc/systemd/system/helios-archive.service /etc/systemd/system/helios-archive.timer
+
+$ systemctl enable --now helios-archive.timer
+Created symlink /etc/systemd/system/timers.target.wants/helios-archive.timer → /etc/systemd/system/helios-archive.timer.
+
+$ systemd-analyze calendar '*-*-* 02:30:00' --iterations=3
+Normalized form: *-*-* 02:30:00
+    Next elapse: Tue 2026-11-03 02:30:00 CET
+       (in UTC): Tue 2026-11-03 01:30:00 UTC
+       From now: 8h left
+       Iter. #2: Wed 2026-11-04 02:30:00 CET
+       (in UTC): Wed 2026-11-04 01:30:00 UTC
+       From now: 1 day 8h left
+       Iter. #3: Thu 2026-11-05 02:30:00 CET
+       (in UTC): Thu 2026-11-05 01:30:00 UTC
+       From now: 2 days left
+
+$ systemctl list-timers helios-archive.timer --all --no-pager
+NEXT                        LEFT    LAST PASSED UNIT                 ACTIVATES
+Tue 2026-11-03 02:30:36 CET 8h left -    -      helios-archive.timer helios-archive.service
+
+1 timers listed.
+
+### Declenchement manuel du service — 2026-11-02 17:37:50
+
+$ systemctl start helios-archive.service && systemctl status helios-archive.service --no-pager
+○ helios-archive.service - Archivage de la telemetrie Helios
+     Loaded: loaded (/etc/systemd/system/helios-archive.service; static)
+     Active: inactive (dead) since Mon 2026-11-02 17:37:50 CET; 36ms ago
+TriggeredBy: ● helios-archive.timer
+    Process: 2467 ExecStart=/usr/local/sbin/helios-archive.sh (code=exited, status=0/SUCCESS)
+   Main PID: 2467 (code=exited, status=0/SUCCESS)
+        CPU: 90ms
+
+nov. 02 17:37:50 srv-core systemd[1]: Starting Archivage de la telemetrie Helios...
+nov. 02 17:37:50 srv-core helios-archive[2479]: archive /var/lib/helios/archives/telemetry-20261102-173750.csv.gz (5 lignes)
+nov. 02 17:37:50 srv-core helios-archive[2485]: fin d execution rc=0
+nov. 02 17:37:50 srv-core systemd[1]: helios-archive.service: Deactivated successfully.
+nov. 02 17:37:50 srv-core systemd[1]: Finished Archivage de la telemetrie Helios.
+
+$ journalctl -u helios-archive.service -n 10 --no-pager
+nov. 02 17:37:50 srv-core systemd[1]: Starting Archivage de la telemetrie Helios...
+nov. 02 17:37:50 srv-core helios-archive[2479]: archive /var/lib/helios/archives/telemetry-20261102-173750.csv.gz (5 lignes)
+nov. 02 17:37:50 srv-core helios-archive[2485]: fin d execution rc=0
+nov. 02 17:37:50 srv-core systemd[1]: helios-archive.service: Deactivated successfully.
+nov. 02 17:37:50 srv-core systemd[1]: Finished Archivage de la telemetrie Helios.
+
+### Observation Persistent=yes : on simule 2 jours de VM eteinte — 2026-11-02 17:37:50
+
+$ touch -d '2 days ago' /var/lib/systemd/timers/stamp-helios-archive.timer && ls -l --time-style=long-iso /var/lib/systemd/timers/stamp-helios-archive.timer
+-rw-r--r--. 1 root root 0 2026-10-31 17:37 /var/lib/systemd/timers/stamp-helios-archive.timer
+
+$ systemctl restart helios-archive.timer
+
+$ journalctl -u helios-archive.service --since '@1793637470' --no-pager
+nov. 02 17:37:50 srv-core systemd[1]: Starting Archivage de la telemetrie Helios...
+nov. 02 17:37:50 srv-core helios-archive[2479]: archive /var/lib/helios/archives/telemetry-20261102-173750.csv.gz (5 lignes)
+nov. 02 17:37:50 srv-core helios-archive[2485]: fin d execution rc=0
+nov. 02 17:37:50 srv-core systemd[1]: helios-archive.service: Deactivated successfully.
+nov. 02 17:37:50 srv-core systemd[1]: Finished Archivage de la telemetrie Helios.
+nov. 02 17:37:50 srv-core systemd[1]: Starting Archivage de la telemetrie Helios...
+
+$ systemctl list-timers helios-archive.timer --all --no-pager
+NEXT LEFT LAST                        PASSED    UNIT                 ACTIVATES
+-    -    Mon 2026-11-02 17:37:50 CET 106ms ago helios-archive.timer helios-archive.service
+
+1 timers listed.
+
+$ systemctl list-timers helios-archive.timer --all --no-pager
+NEXT                        LEFT    LAST                        PASSED  UNIT                 ACTIVATES
+Tue 2026-11-03 02:30:24 CET 8h left Mon 2026-11-02 17:37:50 CET 23s ago helios-archive.timer helios-archive.service
+
+1 timers listed.

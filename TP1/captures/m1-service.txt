@@ -1,0 +1,24 @@
+
+$ systemd-analyze verify /etc/systemd/system/helios-collect.service
+
+$ systemctl enable helios-collect.service && systemctl restart helios-collect.service
+Created symlink /etc/systemd/system/multi-user.target.wants/helios-collect.service → /etc/systemd/system/helios-collect.service.
+
+$ systemctl status helios-collect.service --no-pager | head -12
+● helios-collect.service - Collecteur de telemetrie Helios
+     Loaded: loaded (/etc/systemd/system/helios-collect.service; enabled; preset: disabled)
+     Active: active (running) since Mon 2026-11-02 17:17:10 CET; 2s ago
+       Docs: https://wiki.helios.lan/collect
+   Main PID: 2085 (helios-collect.)
+      Tasks: 2 (limit: 10632)
+     Memory: 792.0K (peak: 1.3M)
+        CPU: 63ms
+     CGroup: /system.slice/helios-collect.service
+             ├─2085 /usr/bin/bash /usr/local/sbin/helios-collect.sh
+             └─2090 sleep 15
+
+
+$ id helios && ls -l /var/lib/helios
+uid=996(helios) gid=996(helios) groupes=996(helios)
+total 4
+-rw-r--r--. 1 helios helios 39  2 nov.  17:17 telemetry.csv

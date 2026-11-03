@@ -1,0 +1,59 @@
+
+$ systemd-analyze
+Startup finished in 3.663s (kernel) + 10.098s (initrd) + 1min 13.934s (userspace) = 1min 27.696s 
+multi-user.target reached after 1min 7.550s in userspace.
+
+$ systemd-analyze blame | head -15
+1min 142ms NetworkManager-wait-online.service
+   10.419s dev-ttyS2.device
+   10.419s sys-devices-platform-serial8250-tty-ttyS2.device
+   10.417s sys-devices-platform-serial8250-tty-ttyS0.device
+   10.417s dev-ttyS0.device
+   10.411s dev-ttyS3.device
+   10.411s sys-devices-platform-serial8250-tty-ttyS3.device
+   10.404s dev-ttyS1.device
+   10.404s sys-devices-platform-serial8250-tty-ttyS1.device
+   10.382s sys-module-configfs.device
+    9.589s sys-devices-pci0000:00-0000:00:0d.0-ata3-host2-target2:0:0-2:0:0:0-block-sda-sda2.device
+    9.589s dev-disk-by\x2dpath-pci\x2d0000:00:0d.0\x2data\x2d1.0\x2dpart2.device
+    9.589s dev-disk-by\x2did-ata\x2dVBOX_HARDDISK_VB8e131604\x2dff347309\x2dpart2.device
+    9.589s dev-disk-by\x2dpartuuid-23772f12\x2d02.device
+    9.589s dev-disk-by\x2dpath-pci\x2d0000:00:0d.0\x2data\x2d1\x2dpart2.device
+
+$ systemd-analyze critical-chain
+The time when unit became active or started is printed after the "@" character.
+The time the unit took to start is printed after the "+" character.
+
+multi-user.target @1min 7.550s
+└─rsyslog.service @1min 7.380s +169ms
+  └─network-online.target @1min 7.357s
+    └─network.target @7.074s
+      └─NetworkManager.service @6.482s +591ms
+        └─network-pre.target @6.471s
+          └─firewalld.service @3.811s +2.658s
+            └─basic.target @3.737s
+              └─dbus-broker.service @3.638s +90ms
+                └─dbus.socket @3.553s
+                  └─sysinit.target @3.545s
+                    └─systemd-update-utmp.service @3.507s +36ms
+                      └─auditd.service @3.230s +262ms
+                        └─systemd-tmpfiles-setup.service @2.914s +305ms
+                          └─local-fs.target @2.879s
+                            └─run-user-1000.mount @24.814s
+                              └─local-fs-pre.target @1.985s
+                                └─systemd-tmpfiles-setup-dev.service @1.834s +150ms
+                                  └─kmod-static-nodes.service @1.357s +345ms
+                                    └─systemd-journald.socket
+                                      └─system.slice
+                                        └─-.slice
+
+$ systemctl disable --now firewalld
+Removed "/etc/systemd/system/multi-user.target.wants/firewalld.service".
+Removed "/etc/systemd/system/dbus-org.fedoraproject.FirewallD1.service".
+
+$ systemctl mask NetworkManager-wait-online.service
+Created symlink /etc/systemd/system/NetworkManager-wait-online.service → /dev/null.
+
+$ systemctl is-enabled firewalld NetworkManager-wait-online.service
+disabled
+masked

@@ -1,0 +1,56 @@
+
+$ ip -br link
+lo               UNKNOWN        00:00:00:00:00:00 <LOOPBACK,UP,LOWER_UP> 
+enp0s3           UP             08:00:27:f6:91:56 <BROADCAST,MULTICAST,UP,LOWER_UP> 
+enp0s8           UP             08:00:27:46:c3:96 <BROADCAST,MULTICAST,UP,LOWER_UP> 
+enp0s9           UP             08:00:27:70:47:6d <BROADCAST,MULTICAST,SLAVE,UP,LOWER_UP> 
+enp0s10          UP             08:00:27:9a:91:2d <BROADCAST,MULTICAST,SLAVE,UP,LOWER_UP> 
+bond0            UP             08:00:27:70:47:6d <BROADCAST,MULTICAST,MASTER,UP,LOWER_UP> 
+bond0.42@bond0   UP             08:00:27:70:47:6d <BROADCAST,MULTICAST,UP,LOWER_UP> 
+
+$ nmcli con add type bond con-name bond0 ifname bond0   bond.options 'mode=active-backup,miimon=100,primary=enp0s9,fail_over_mac=active'   ipv4.method manual ipv4.addresses 10.42.0.10/24 ipv4.never-default yes ipv6.method disabled
+Connexion « bond0 » (e9c08136-3e22-4be2-9d8f-e79edddc4704) ajoutée avec succès.
+
+$ nmcli con add type ethernet con-name bond0-p1 ifname enp0s9 master bond0
+Connexion « bond0-p1 » (b5a28af7-036a-49c7-93ac-ead3365d706a) ajoutée avec succès.
+
+$ nmcli con add type ethernet con-name bond0-p2 ifname enp0s10 master bond0
+Connexion « bond0-p2 » (0a4a8c24-72df-4c94-8c46-0f66eb6f6944) ajoutée avec succès.
+
+$ nmcli con up bond0 ; nmcli con up bond0-p1 ; nmcli con up bond0-p2
+Connexion activée (controller waiting for ports) (Chemin D-Bus actif : /org/freedesktop/NetworkManager/ActiveConnection/26)
+Connexion activée (chemin D-Bus actif : /org/freedesktop/NetworkManager/ActiveConnection/29)
+Connexion activée (chemin D-Bus actif : /org/freedesktop/NetworkManager/ActiveConnection/30)
+
+$ cat /proc/net/bonding/bond0
+Ethernet Channel Bonding Driver: v5.14.0-687.10.1.el9_8.0.1.x86_64
+
+Bonding Mode: fault-tolerance (active-backup) (fail_over_mac active)
+Primary Slave: enp0s9 (primary_reselect always)
+Currently Active Slave: enp0s9
+MII Status: up
+MII Polling Interval (ms): 100
+Up Delay (ms): 0
+Down Delay (ms): 0
+Peer Notification Delay (ms): 0
+
+Slave Interface: enp0s9
+MII Status: up
+Speed: 1000 Mbps
+Duplex: full
+Link Failure Count: 0
+Permanent HW addr: 08:00:27:70:47:6d
+Slave queue ID: 0
+
+Slave Interface: enp0s10
+MII Status: up
+Speed: 1000 Mbps
+Duplex: full
+Link Failure Count: 0
+Permanent HW addr: 08:00:27:9a:91:2d
+Slave queue ID: 0
+
+$ ip -d link show bond0
+8: bond0: <BROADCAST,MULTICAST,MASTER,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP mode DEFAULT group default qlen 1000
+    link/ether 08:00:27:70:47:6d brd ff:ff:ff:ff:ff:ff promiscuity 0 allmulti 0 minmtu 68 maxmtu 65535 
+    bond mode active-backup active_slave enp0s9 miimon 100 updelay 0 downdelay 0 peer_notify_delay 0 use_carrier 1 arp_interval 0 arp_missed_max 2 arp_validate none arp_all_targets any primary enp0s9 primary_reselect always fail_over_mac active xmit_hash_policy layer2 resend_igmp 1 num_grat_arp 1 all_slaves_active 0 min_links 0 lp_interval 1 packets_per_slave 1 lacp_active on lacp_rate slow ad_select stable tlb_dynamic_lb 1 addrgenmode none numtxqueues 16 numrxqueues 16 gso_max_size 65536 gso_max_segs 65535 tso_max_size 65536 tso_max_segs 65535 gro_max_size 65536 gso_ipv4_max_size 65536 gro_ipv4_max_size 65536 

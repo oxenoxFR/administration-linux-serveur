@@ -1,0 +1,21 @@
+
+$ nmcli con add type vlan con-name bond0.42 ifname bond0.42 dev bond0 id 42   ipv4.method manual ipv4.addresses 10.42.42.10/24 ipv4.never-default yes ipv6.method disabled
+Connexion « bond0.42 » (d97f7713-f074-44ac-9efe-719d4eec5fb5) ajoutée avec succès.
+
+$ nmcli con up bond0.42
+Connexion activée (chemin D-Bus actif : /org/freedesktop/NetworkManager/ActiveConnection/32)
+
+$ ip -d link show bond0.42 | grep -A1 vlan
+    vlan protocol 802.1Q id 42 <REORDER_HDR> addrgenmode none numtxqueues 1 numrxqueues 1 gso_max_size 65536 gso_max_segs 65535 tso_max_size 65536 tso_max_segs 65535 gro_max_size 65536 gso_ipv4_max_size 65536 gro_ipv4_max_size 65536 
+
+$ ping -c 5 10.42.42.11
+PING 10.42.42.11 (10.42.42.11) 56(84) octets de données.
+64 octets de 10.42.42.11 : icmp_seq=1 ttl=64 temps=1.93 ms
+64 octets de 10.42.42.11 : icmp_seq=2 ttl=64 temps=1.19 ms
+64 octets de 10.42.42.11 : icmp_seq=3 ttl=64 temps=1.50 ms
+64 octets de 10.42.42.11 : icmp_seq=4 ttl=64 temps=1.03 ms
+64 octets de 10.42.42.11 : icmp_seq=5 ttl=64 temps=0.992 ms
+
+--- statistiques ping 10.42.42.11 ---
+5 paquets transmis, 5 reçus, 0% packet loss, time 4009ms
+rtt min/avg/max/mdev = 0.992/1.328/1.927/0.348 ms

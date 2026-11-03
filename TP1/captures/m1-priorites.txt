@@ -1,0 +1,22 @@
+
+### Lancement avec nice -n 19 — 2026-11-02 17:17:47
+
+$ ps -o pid,ni,pri,cls,rtprio,comm -p 2455
+    PID  NI PRI CLS RTPRIO COMMAND
+   2455  19   0  TS      - sha256sum
+
+### Modification a chaud — 2026-11-02 17:17:48
+
+$ renice -n 5 -p 2455
+2455 (process ID) priorité précédente 19, nouvelle priorité 5
+
+$ ionice -c 2 -n 7 -p 2455 ; ionice -p 2455
+best-effort : priorité 7
+
+$ chrt -p 2455
+stratégie d’ordonnancement actuelle pour le PID 2455 : SCHED_OTHER
+priorité de planification actuelle pour le PID 2455 : 0
+
+$ ps -o pid,ni,pri,cls,rtprio,comm -p 2455
+    PID  NI PRI CLS RTPRIO COMMAND
+   2455   5  14  TS      - sha256sum

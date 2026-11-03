@@ -1,0 +1,12 @@
+
+$ systemd-analyze verify /etc/systemd/system/helios-inbox.path
+
+$ systemctl enable --now helios-inbox.path
+Created symlink /etc/systemd/system/paths.target.wants/helios-inbox.path → /etc/systemd/system/helios-inbox.path.
+
+$ touch /srv/helios/inbox/test.csv ; sleep 3 ; journalctl -t helios-archive -n 5 --no-pager
+nov. 02 17:38:01 srv-core helios-archive[2623]: fin d execution rc=0
+nov. 02 17:38:11 srv-core helios-archive[2744]: demarrage
+nov. 02 17:38:11 srv-core helios-archive[2754]: archive /var/lib/helios/archives/telemetry-20261102-173811.csv.gz (2 lignes)
+nov. 02 17:38:11 srv-core helios-archive[2758]: purge : 0 archive(s) supprimee(s)
+nov. 02 17:38:11 srv-core helios-archive[2760]: fin d execution rc=0

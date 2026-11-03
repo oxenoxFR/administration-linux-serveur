@@ -1,0 +1,118 @@
+
+$ systemd-analyze verify /etc/systemd/system/helios.target
+
+$ systemctl add-wants helios.target helios-collect.service
+Created symlink /etc/systemd/system/helios.target.wants/helios-collect.service → /etc/systemd/system/helios-collect.service.
+
+$ systemctl enable helios.target
+Created symlink /etc/systemd/system/multi-user.target.wants/helios.target → /etc/systemd/system/helios.target.
+
+$ systemctl list-dependencies helios.target --no-pager
+helios.target
+● ├─helios-collect.service
+● └─multi-user.target
+●   ├─auditd.service
+●   ├─chronyd.service
+●   ├─crond.service
+●   ├─helios-collect.service
+●   ├─irqbalance.service
+●   ├─kdump.service
+●   ├─NetworkManager.service
+●   ├─rsyslog.service
+●   ├─sshd.service
+○   ├─sssd.service
+●   ├─systemd-ask-password-wall.path
+●   ├─systemd-logind.service
+○   ├─systemd-update-utmp-runlevel.service
+●   ├─systemd-user-sessions.service
+●   ├─basic.target
+●   │ ├─-.mount
+○   │ ├─microcode.service
+●   │ ├─paths.target
+●   │ ├─slices.target
+●   │ │ ├─-.slice
+●   │ │ └─system.slice
+●   │ ├─sockets.target
+●   │ │ ├─dbus.socket
+●   │ │ ├─dm-event.socket
+●   │ │ ├─sssd-kcm.socket
+●   │ │ ├─systemd-coredump.socket
+●   │ │ ├─systemd-initctl.socket
+●   │ │ ├─systemd-journald-dev-log.socket
+●   │ │ ├─systemd-journald.socket
+●   │ │ ├─systemd-udevd-control.socket
+●   │ │ └─systemd-udevd-kernel.socket
+●   │ ├─sysinit.target
+●   │ │ ├─dev-hugepages.mount
+●   │ │ ├─dev-mqueue.mount
+●   │ │ ├─dracut-shutdown.service
+●   │ │ ├─kmod-static-nodes.service
+○   │ │ ├─ldconfig.service
+●   │ │ ├─lvm2-lvmpolld.socket
+●   │ │ ├─lvm2-monitor.service
+●   │ │ ├─nis-domainname.service
+●   │ │ ├─proc-sys-fs-binfmt_misc.automount
+○   │ │ ├─selinux-autorelabel-mark.service
+●   │ │ ├─sys-fs-fuse-connections.mount
+●   │ │ ├─sys-kernel-config.mount
+●   │ │ ├─sys-kernel-debug.mount
+●   │ │ ├─sys-kernel-tracing.mount
+●   │ │ ├─systemd-ask-password-console.path
+○   │ │ ├─systemd-binfmt.service
+○   │ │ ├─systemd-boot-random-seed.service
+●   │ │ ├─systemd-boot-update.service
+○   │ │ ├─systemd-firstboot.service
+○   │ │ ├─systemd-hwdb-update.service
+○   │ │ ├─systemd-journal-catalog-update.service
+●   │ │ ├─systemd-journal-flush.service
+●   │ │ ├─systemd-journald.service
+○   │ │ ├─systemd-machine-id-commit.service
+○   │ │ ├─systemd-modules-load.service
+●   │ │ ├─systemd-network-generator.service
+○   │ │ ├─systemd-pcrmachine.service
+○   │ │ ├─systemd-pcrphase-sysinit.service
+○   │ │ ├─systemd-pcrphase.service
+○   │ │ ├─systemd-pstore.service
+●   │ │ ├─systemd-random-seed.service
+○   │ │ ├─systemd-repart.service
+●   │ │ ├─systemd-sysctl.service
+○   │ │ ├─systemd-sysusers.service
+●   │ │ ├─systemd-tmpfiles-setup-dev.service
+●   │ │ ├─systemd-tmpfiles-setup.service
+●   │ │ ├─systemd-udev-trigger.service
+●   │ │ ├─systemd-udevd.service
+○   │ │ ├─systemd-update-done.service
+●   │ │ ├─systemd-update-utmp.service
+●   │ │ ├─cryptsetup.target
+●   │ │ ├─integritysetup.target
+●   │ │ ├─local-fs.target
+●   │ │ │ ├─-.mount
+●   │ │ │ ├─boot.mount
+●   │ │ │ └─systemd-remount-fs.service
+●   │ │ ├─swap.target
+●   │ │ │ └─dev-mapper-rl\x2dswap.swap
+●   │ │ └─veritysetup.target
+●   │ └─timers.target
+●   │   ├─dnf-makecache.timer
+●   │   ├─logrotate.timer
+●   │   └─systemd-tmpfiles-clean.timer
+●   ├─getty.target
+●   │ └─getty@tty1.service
+    │ └─...
+●   └─remote-fs.target
+
+### Arret de la target — 2026-11-02 17:17:46
+
+$ systemctl stop helios.target
+
+$ systemctl is-active helios.target helios-collect.service
+inactive
+active
+
+### Redemarrage de la target — 2026-11-02 17:17:46
+
+$ systemctl start helios.target
+
+$ systemctl is-active helios.target helios-collect.service
+active
+active

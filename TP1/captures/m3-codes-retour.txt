@@ -1,0 +1,37 @@
+
+$ ls -l /usr/local/sbin/helios-archive.sh
+-rwxr-x---. 1 root root 1579  2 nov.  17:37 /usr/local/sbin/helios-archive.sh
+
+### Cas nominal (attendu 0) — 2026-11-02 17:37:29
+
+$ /usr/local/sbin/helios-archive.sh
+
+$ journalctl -t helios-archive -n 10 --no-pager
+nov. 02 17:37:29 srv-core helios-archive[2284]: demarrage
+nov. 02 17:37:29 srv-core helios-archive[2294]: archive /var/lib/helios/archives/telemetry-20261102-173729.csv.gz (235 lignes)
+nov. 02 17:37:29 srv-core helios-archive[2298]: purge : 0 archive(s) supprimee(s)
+nov. 02 17:37:29 srv-core helios-archive[2300]: fin d execution rc=0
+
+$ ls -l /var/lib/helios/archives/
+total 4
+-rw-r-----. 1 helios helios 1533  2 nov.  17:37 telemetry-20261102-173729.csv.gz
+
+### Verrou deja pris (attendu 2) — 2026-11-02 17:37:29
+
+$ /usr/local/sbin/helios-archive.sh
+
+### Source absente (attendu 3) — 2026-11-02 17:37:49
+
+$ /usr/local/sbin/helios-archive.sh
+
+$ journalctl -t helios-archive -n 8 --no-pager
+nov. 02 17:37:29 srv-core helios-archive[2284]: demarrage
+nov. 02 17:37:29 srv-core helios-archive[2294]: archive /var/lib/helios/archives/telemetry-20261102-173729.csv.gz (235 lignes)
+nov. 02 17:37:29 srv-core helios-archive[2298]: purge : 0 archive(s) supprimee(s)
+nov. 02 17:37:29 srv-core helios-archive[2300]: fin d execution rc=0
+nov. 02 17:37:30 srv-core helios-archive[2325]: une autre instance tourne deja
+nov. 02 17:37:30 srv-core helios-archive[2326]: fin d execution rc=2
+nov. 02 17:37:49 srv-core helios-archive[2353]: source illisible : /var/lib/helios/telemetry.csv
+nov. 02 17:37:49 srv-core helios-archive[2354]: fin d execution rc=3
+
+### Codes retour observes : nominal=0  verrou=2  source_absente=3

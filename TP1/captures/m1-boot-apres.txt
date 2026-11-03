@@ -1,0 +1,46 @@
+
+$ systemd-analyze
+Startup finished in 3.362s (kernel) + 9.807s (initrd) + 10.449s (userspace) = 23.618s 
+multi-user.target reached after 5.056s in userspace.
+
+$ systemd-analyze blame | head -15
+10.319s sys-devices-platform-serial8250-tty-ttyS3.device
+10.319s dev-ttyS3.device
+10.307s sys-devices-platform-serial8250-tty-ttyS1.device
+10.307s dev-ttyS1.device
+10.306s sys-devices-platform-serial8250-tty-ttyS2.device
+10.306s dev-ttyS2.device
+10.289s dev-ttyS0.device
+10.289s sys-devices-platform-serial8250-tty-ttyS0.device
+10.242s sys-module-configfs.device
+ 9.235s dev-disk-by\x2dpath-pci\x2d0000:00:0d.0\x2data\x2d1\x2dpart2.device
+ 9.235s sys-devices-pci0000:00-0000:00:0d.0-ata3-host2-target2:0:0-2:0:0:0-block-sda-sda2.device
+ 9.235s dev-disk-by\x2dpartuuid-23772f12\x2d02.device
+ 9.235s dev-sda2.device
+ 9.235s dev-disk-by\x2did-ata\x2dVBOX_HARDDISK_VB8e131604\x2dff347309\x2dpart2.device
+ 9.235s dev-disk-by\x2dpath-pci\x2d0000:00:0d.0\x2data\x2d1.0\x2dpart2.device
+
+$ systemd-analyze critical-chain
+The time when unit became active or started is printed after the "@" character.
+The time the unit took to start is printed after the "+" character.
+
+multi-user.target @5.056s
+└─rsyslog.service @4.779s +258ms
+  └─network-online.target @4.712s
+    └─network.target @4.711s
+      └─NetworkManager.service @3.844s +865ms
+        └─basic.target @3.832s
+          └─dbus-broker.service @3.732s +90ms
+            └─dbus.socket @3.701s
+              └─sysinit.target @3.695s
+                └─systemd-update-utmp.service @3.667s +25ms
+                  └─auditd.service @3.448s +209ms
+                    └─systemd-tmpfiles-setup.service @3.193s +247ms
+                      └─local-fs.target @3.171s
+                        └─run-credentials-systemd\x2dtmpfiles\x2dsetup.service.mount @3.218s
+                          └─local-fs-pre.target @1.938s
+                            └─systemd-tmpfiles-setup-dev.service @1.822s +114ms
+                              └─kmod-static-nodes.service @1.304s +334ms
+                                └─systemd-journald.socket
+                                  └─system.slice
+                                    └─-.slice

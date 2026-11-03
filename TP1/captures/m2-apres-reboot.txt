@@ -1,0 +1,87 @@
+
+$ uptime
+ 17:36:41 up 4 min,  3 users,  load average: 0,06, 0,10, 0,05
+
+$ nmcli -f NAME,DEVICE,STATE con show --active
+NAME      DEVICE    STATE  
+enp0s3    enp0s3    activé 
+enp0s8    enp0s8    activé 
+bond0     bond0     activé 
+bond0.42  bond0.42  activé 
+bond0-p1  enp0s9    activé 
+bond0-p2  enp0s10   activé 
+lo        lo        activé 
+
+$ cat /proc/net/bonding/bond0
+Ethernet Channel Bonding Driver: v5.14.0-687.10.1.el9_8.0.1.x86_64
+
+Bonding Mode: fault-tolerance (active-backup) (fail_over_mac active)
+Primary Slave: enp0s9 (primary_reselect always)
+Currently Active Slave: enp0s9
+MII Status: up
+MII Polling Interval (ms): 100
+Up Delay (ms): 0
+Down Delay (ms): 0
+Peer Notification Delay (ms): 0
+
+Slave Interface: enp0s10
+MII Status: up
+Speed: 1000 Mbps
+Duplex: full
+Link Failure Count: 0
+Permanent HW addr: 08:00:27:9a:91:2d
+Slave queue ID: 0
+
+Slave Interface: enp0s9
+MII Status: up
+Speed: 1000 Mbps
+Duplex: full
+Link Failure Count: 0
+Permanent HW addr: 08:00:27:70:47:6d
+Slave queue ID: 0
+
+$ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128 
+enp0s3           UP             10.0.2.15/24 fd17:625c:f037:2:a00:27ff:fef6:9156/64 fe80::a00:27ff:fef6:9156/64 
+enp0s8           UP             192.168.56.10/24 fe80::a00:27ff:fe46:c396/64 
+enp0s9           UP             
+enp0s10          UP             
+bond0            UP             10.42.0.10/24 
+bond0.42@bond0   UP             10.42.42.10/24 
+
+$ ip rule show
+0:	from all lookup local
+100:	from 10.42.42.10 lookup transport proto static
+32766:	from all lookup main
+32767:	from all lookup default
+
+$ ip route show table transport
+default via 10.42.42.11 dev bond0.42 proto static metric 400 
+
+$ ip route get 8.8.8.8 from 10.42.42.10
+8.8.8.8 from 10.42.42.10 via 10.42.42.11 dev bond0.42 table transport uid 0 
+    cache 
+
+$ ip route get 8.8.8.8
+8.8.8.8 via 10.0.2.2 dev enp0s3 src 10.0.2.15 uid 0 
+    cache 
+
+$ ping -c 3 10.42.0.11
+PING 10.42.0.11 (10.42.0.11) 56(84) octets de données.
+64 octets de 10.42.0.11 : icmp_seq=1 ttl=64 temps=1.41 ms
+64 octets de 10.42.0.11 : icmp_seq=2 ttl=64 temps=1.11 ms
+64 octets de 10.42.0.11 : icmp_seq=3 ttl=64 temps=1.38 ms
+
+--- statistiques ping 10.42.0.11 ---
+3 paquets transmis, 3 reçus, 0% packet loss, time 2005ms
+rtt min/avg/max/mdev = 1.106/1.299/1.411/0.137 ms
+
+$ ping -c 3 10.42.42.11
+PING 10.42.42.11 (10.42.42.11) 56(84) octets de données.
+64 octets de 10.42.42.11 : icmp_seq=1 ttl=64 temps=2.11 ms
+64 octets de 10.42.42.11 : icmp_seq=2 ttl=64 temps=0.923 ms
+64 octets de 10.42.42.11 : icmp_seq=3 ttl=64 temps=0.852 ms
+
+--- statistiques ping 10.42.42.11 ---
+3 paquets transmis, 3 reçus, 0% packet loss, time 2005ms
+rtt min/avg/max/mdev = 0.852/1.296/2.113/0.578 ms

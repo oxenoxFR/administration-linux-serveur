@@ -1,0 +1,60 @@
+
+$ systemctl enable --now crond
+
+$ cat /etc/cron.d/helios-legacy
+MAILTO=""
+30 2 * * * root /usr/local/sbin/helios-archive.sh
+
+$ systemctl restart crond ; journalctl -u crond -n 10 --no-pager
+nov. 02 17:37:51 srv-core systemd[1]: Stopping Command Scheduler...
+nov. 02 17:37:51 srv-core crond[773]: (CRON) INFO (Shutting down)
+nov. 02 17:37:51 srv-core systemd[1]: crond.service: Deactivated successfully.
+nov. 02 17:37:51 srv-core systemd[1]: Stopped Command Scheduler.
+nov. 02 17:37:51 srv-core systemd[1]: Started Command Scheduler.
+nov. 02 17:37:51 srv-core crond[2586]: (CRON) STARTUP (1.5.7)
+nov. 02 17:37:51 srv-core crond[2586]: (CRON) INFO (Syslog will be used instead of sendmail.)
+nov. 02 17:37:51 srv-core crond[2586]: (CRON) INFO (RANDOM_DELAY will be scaled with factor 87% if used.)
+nov. 02 17:37:51 srv-core crond[2586]: (CRON) INFO (running with inotify support)
+nov. 02 17:37:51 srv-core crond[2586]: (CRON) INFO (@reboot jobs will be run at computer's startup.)
+
+### Observation : meme script lance par cron chaque minute pour voir ce que cron journalise — 2026-11-02 17:37:51
+
+$ journalctl -u crond --since '@1793637471' --no-pager
+nov. 02 17:37:51 srv-core systemd[1]: Stopping Command Scheduler...
+nov. 02 17:37:51 srv-core crond[773]: (CRON) INFO (Shutting down)
+nov. 02 17:37:51 srv-core systemd[1]: crond.service: Deactivated successfully.
+nov. 02 17:37:51 srv-core systemd[1]: Stopped Command Scheduler.
+nov. 02 17:37:51 srv-core systemd[1]: Started Command Scheduler.
+nov. 02 17:37:51 srv-core crond[2586]: (CRON) STARTUP (1.5.7)
+nov. 02 17:37:51 srv-core crond[2586]: (CRON) INFO (Syslog will be used instead of sendmail.)
+nov. 02 17:37:51 srv-core crond[2586]: (CRON) INFO (RANDOM_DELAY will be scaled with factor 87% if used.)
+nov. 02 17:37:51 srv-core crond[2586]: (CRON) INFO (running with inotify support)
+nov. 02 17:37:51 srv-core crond[2586]: (CRON) INFO (@reboot jobs will be run at computer's startup.)
+nov. 02 17:37:51 srv-core systemd[1]: Stopping Command Scheduler...
+nov. 02 17:37:51 srv-core crond[2586]: (CRON) INFO (Shutting down)
+nov. 02 17:37:51 srv-core systemd[1]: crond.service: Deactivated successfully.
+nov. 02 17:37:51 srv-core systemd[1]: Stopped Command Scheduler.
+nov. 02 17:37:51 srv-core systemd[1]: Started Command Scheduler.
+nov. 02 17:37:51 srv-core crond[2592]: (CRON) STARTUP (1.5.7)
+nov. 02 17:37:51 srv-core crond[2592]: (CRON) INFO (Syslog will be used instead of sendmail.)
+nov. 02 17:37:51 srv-core crond[2592]: (CRON) INFO (RANDOM_DELAY will be scaled with factor 41% if used.)
+nov. 02 17:37:51 srv-core crond[2592]: (CRON) INFO (running with inotify support)
+nov. 02 17:37:51 srv-core crond[2592]: (CRON) INFO (@reboot jobs will be run at computer's startup.)
+nov. 02 17:38:01 srv-core CROND[2605]: (root) CMD (/usr/local/sbin/helios-archive.sh)
+nov. 02 17:38:01 srv-core helios-archive[2607]: demarrage
+nov. 02 17:38:01 srv-core helios-archive[2621]: purge : 0 archive(s) supprimee(s)
+nov. 02 17:38:01 srv-core helios-archive[2623]: fin d execution rc=0
+nov. 02 17:38:01 srv-core CROND[2604]: (root) CMDEND (/usr/local/sbin/helios-archive.sh)
+
+$ journalctl -t helios-archive --since '@1793637471' --no-pager
+nov. 02 17:38:01 srv-core helios-archive[2607]: demarrage
+nov. 02 17:38:01 srv-core helios-archive[2617]: archive /var/lib/helios/archives/telemetry-20261102-173801.csv.gz (2 lignes)
+nov. 02 17:38:01 srv-core helios-archive[2621]: purge : 0 archive(s) supprimee(s)
+nov. 02 17:38:01 srv-core helios-archive[2623]: fin d execution rc=0
+
+### Retrait — 2026-11-02 17:38:10
+
+$ rm -f /etc/cron.d/helios-legacy && systemctl restart crond
+
+$ ls /etc/cron.d/
+0hourly

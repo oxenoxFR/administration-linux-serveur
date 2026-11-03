@@ -1,0 +1,72 @@
+
+### AVANT la coupure — 2026-11-02 17:27:53
+
+$ cat /proc/net/bonding/bond0
+Ethernet Channel Bonding Driver: v5.14.0-687.10.1.el9_8.0.1.x86_64
+
+Bonding Mode: fault-tolerance (active-backup) (fail_over_mac active)
+Primary Slave: enp0s9 (primary_reselect always)
+Currently Active Slave: enp0s9
+MII Status: up
+MII Polling Interval (ms): 100
+Up Delay (ms): 0
+Down Delay (ms): 0
+Peer Notification Delay (ms): 0
+
+Slave Interface: enp0s9
+MII Status: up
+Speed: 1000 Mbps
+Duplex: full
+Link Failure Count: 0
+Permanent HW addr: 08:00:27:70:47:6d
+Slave queue ID: 0
+
+Slave Interface: enp0s10
+MII Status: up
+Speed: 1000 Mbps
+Duplex: full
+Link Failure Count: 0
+Permanent HW addr: 08:00:27:9a:91:2d
+Slave queue ID: 0
+
+### PENDANT la coupure — 2026-11-02 17:30:34
+
+$ grep -E 'Currently Active Slave|Slave Interface|MII Status' /proc/net/bonding/bond0
+Currently Active Slave: enp0s10
+MII Status: up
+Slave Interface: enp0s9
+MII Status: down
+Slave Interface: enp0s10
+MII Status: up
+
+$ journalctl -k -n 20 --no-pager | grep -i bond
+nov. 02 17:27:48 srv-core kernel: bond0: (slave enp0s9): Releasing backup interface
+nov. 02 17:27:48 srv-core kernel: bond0: (slave enp0s9): Enslaving as a backup interface with a down link
+nov. 02 17:27:48 srv-core kernel: bond0: (slave enp0s9): prio updated, but will not affect failover re-selection as primary slave have been set
+nov. 02 17:27:48 srv-core kernel: bond0: (slave enp0s10): Releasing backup interface
+nov. 02 17:27:48 srv-core kernel: bond0: (slave enp0s10): Enslaving as a backup interface with a down link
+nov. 02 17:27:48 srv-core kernel: bond0: (slave enp0s10): prio updated, but will not affect failover re-selection as primary slave have been set
+nov. 02 17:27:50 srv-core kernel: bond0: (slave enp0s9): link status definitely up, 1000 Mbps full duplex
+nov. 02 17:27:50 srv-core kernel: bond0: (slave enp0s9): making interface the new active one
+nov. 02 17:27:50 srv-core kernel: bond0: active interface up!
+nov. 02 17:27:51 srv-core kernel: bond0: (slave enp0s10): link status definitely up, 1000 Mbps full duplex
+nov. 02 17:28:29 srv-core kernel: bond0: (slave enp0s9): link status definitely down, disabling slave
+nov. 02 17:28:29 srv-core kernel: bond0: (slave enp0s10): making interface the new active one
+
+### APRES retablissement — 2026-11-02 17:31:50
+
+$ grep -E 'Currently Active Slave|Slave Interface|MII Status' /proc/net/bonding/bond0
+Currently Active Slave: enp0s9
+MII Status: up
+Slave Interface: enp0s9
+MII Status: up
+Slave Interface: enp0s10
+MII Status: up
+
+$ journalctl -k -n 10 --no-pager | grep -i bond
+nov. 02 17:27:50 srv-core kernel: bond0: active interface up!
+nov. 02 17:27:51 srv-core kernel: bond0: (slave enp0s10): link status definitely up, 1000 Mbps full duplex
+nov. 02 17:28:29 srv-core kernel: bond0: (slave enp0s9): link status definitely down, disabling slave
+nov. 02 17:28:29 srv-core kernel: bond0: (slave enp0s10): making interface the new active one
+nov. 02 17:30:53 srv-core kernel: bond0: (slave enp0s9): link status definitely up, 1000 Mbps full duplex
+nov. 02 17:30:53 srv-core kernel: bond0: (slave enp0s9): making interface the new active one
