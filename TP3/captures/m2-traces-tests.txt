@@ -1,0 +1,29 @@
+
+$ journalctl -u sshd --since '-15min' -o short-iso --no-pager | tail -60
+2026-11-03T20:01:06+0100 srv-core sshd-session[19942]: Connection closed by authenticating user david 192.168.56.11 port 48896 [preauth]
+2026-11-03T20:01:06+0100 srv-core sshd-session[19944]: Connection closed by authenticating user david 192.168.56.11 port 48902 [preauth]
+2026-11-03T20:01:11+0100 srv-core sshd-session[19946]: Accepted password for david from 192.168.56.11 port 48906 ssh2
+2026-11-03T20:01:11+0100 srv-core sshd-session[19946]: pam_unix(sshd:session): session opened for user david(uid=1000) by david(uid=0)
+2026-11-03T20:01:11+0100 srv-core sshd-session[19946]: pam_unix(sshd:session): session closed for user david
+2026-11-03T20:01:11+0100 srv-core sshd-session[19987]: Accepted publickey for david from 192.168.56.11 port 42158 ssh2: ED25519 SHA256:EOZ2oTiaWj5jRSfrvK2tu+JmbD97MNl2JdrIo3J6gaE
+2026-11-03T20:01:12+0100 srv-core sshd-session[19987]: pam_unix(sshd:session): session opened for user david(uid=1000) by david(uid=0)
+2026-11-03T20:01:12+0100 srv-core sshd-session[19987]: pam_unix(sshd:session): session closed for user david
+2026-11-03T20:04:26+0100 srv-core sshd-session[20180]: Accepted publickey for david from 192.168.56.1 port 54205 ssh2: ED25519 SHA256:p9a+ywyFRfsHLwH77su7xUCvdULyxBG7CioQwPJzwgQ
+2026-11-03T20:04:26+0100 srv-core sshd-session[20180]: pam_unix(sshd:session): session opened for user david(uid=1000) by david(uid=0)
+2026-11-03T20:05:32+0100 srv-core sshd[772]: Received signal 15; terminating.
+2026-11-03T20:05:32+0100 srv-core systemd[1]: Stopping OpenSSH server daemon...
+2026-11-03T20:05:32+0100 srv-core systemd[1]: sshd.service: Deactivated successfully.
+2026-11-03T20:05:32+0100 srv-core systemd[1]: Stopped OpenSSH server daemon.
+2026-11-03T20:05:32+0100 srv-core systemd[1]: sshd.service: Consumed 1.815s CPU time.
+2026-11-03T20:05:32+0100 srv-core systemd[1]: Starting OpenSSH server daemon...
+2026-11-03T20:05:32+0100 srv-core sshd[21242]: error: Bind to port 2242 on 10.42.0.10 failed: Permission denied.
+2026-11-03T20:05:32+0100 srv-core sshd[21242]: error: Bind to port 2242 on 192.168.56.10 failed: Permission denied.
+2026-11-03T20:05:32+0100 srv-core sshd[21242]: fatal: Cannot bind any address.
+2026-11-03T20:05:32+0100 srv-core systemd[1]: sshd.service: Main process exited, code=exited, status=255/EXCEPTION
+2026-11-03T20:05:32+0100 srv-core systemd[1]: sshd.service: Failed with result 'exit-code'.
+2026-11-03T20:05:32+0100 srv-core systemd[1]: Failed to start OpenSSH server daemon.
+2026-11-03T20:05:44+0100 srv-core systemd[1]: Stopped OpenSSH server daemon.
+2026-11-03T20:05:44+0100 srv-core systemd[1]: Starting OpenSSH server daemon...
+2026-11-03T20:05:44+0100 srv-core sshd[21288]: Server listening on 10.42.0.10 port 2242.
+2026-11-03T20:05:44+0100 srv-core sshd[21288]: Server listening on 192.168.56.10 port 2242.
+2026-11-03T20:05:44+0100 srv-core systemd[1]: Started OpenSSH server daemon.

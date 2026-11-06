@@ -1,0 +1,34 @@
+
+$ ssh -p 2242 -o StrictHostKeyChecking=accept-new -o ConnectTimeout=5 -o BatchMode=yes david@192.168.56.10 "journalctl -t helios-watch-auth --since today --no-pager | grep -v 'une autre instance' | tail -12; echo; journalctl -u sshd --since today -g 'pirate' -o short-iso --no-pager | tail -12; echo; journalctl -k --since today -g 'SSH-NEW' -o short-iso --no-pager | tail -4"
+*** Serveur Helios Logistique - acces strictement reserve ***
+Toute connexion est journalisee.
+nov. 04 15:10:34 srv-core helios-watch-auth[2716]: analyse terminee : 0 source(s) au-dessus du seuil, 0 nouveau(x) blocage(s)
+nov. 04 15:10:35 srv-core helios-watch-auth[2749]: analyse terminee : 0 source(s) au-dessus du seuil, 0 nouveau(x) blocage(s)
+nov. 04 15:12:09 srv-core helios-watch-auth[2840]: analyse terminee : 0 source(s) au-dessus du seuil, 0 nouveau(x) blocage(s)
+nov. 04 15:14:09 srv-core helios-watch-auth[2986]: analyse terminee : 0 source(s) au-dessus du seuil, 0 nouveau(x) blocage(s)
+nov. 04 15:16:11 srv-core helios-watch-auth[3112]: BLOCAGE 192.168.56.11 : 10 echecs SSH en 10 min
+nov. 04 15:16:11 srv-core helios-watch-auth[3113]: analyse terminee : 1 source(s) au-dessus du seuil, 1 nouveau(x) blocage(s)
+nov. 04 15:28:10 srv-core helios-watch-auth[3860]: analyse terminee : 0 source(s) au-dessus du seuil, 0 nouveau(x) blocage(s)
+nov. 04 15:30:00 srv-core helios-watch-auth[3959]: analyse terminee : 0 source(s) au-dessus du seuil, 0 nouveau(x) blocage(s)
+nov. 04 15:32:09 srv-core helios-watch-auth[4076]: analyse terminee : 0 source(s) au-dessus du seuil, 0 nouveau(x) blocage(s)
+nov. 04 15:34:09 srv-core helios-watch-auth[4180]: analyse terminee : 0 source(s) au-dessus du seuil, 0 nouveau(x) blocage(s)
+nov. 04 15:36:00 srv-core helios-watch-auth[4282]: analyse terminee : 0 source(s) au-dessus du seuil, 0 nouveau(x) blocage(s)
+nov. 04 15:38:03 srv-core helios-watch-auth[4398]: analyse terminee : 0 source(s) au-dessus du seuil, 0 nouveau(x) blocage(s)
+
+2026-11-04T15:12:51+0100 srv-core sshd-session[2881]: Invalid user pirate from 192.168.56.11 port 53266
+2026-11-04T15:12:51+0100 srv-core sshd-session[2881]: Connection closed by invalid user pirate 192.168.56.11 port 53266 [preauth]
+2026-11-04T15:14:10+0100 srv-core sshd-session[2987]: Invalid user pirate from 192.168.56.11 port 43956
+2026-11-04T15:14:10+0100 srv-core sshd-session[2987]: Connection closed by invalid user pirate 192.168.56.11 port 43956 [preauth]
+2026-11-04T15:14:11+0100 srv-core sshd-session[2989]: Invalid user pirate from 192.168.56.11 port 43968
+2026-11-04T15:14:11+0100 srv-core sshd-session[2989]: Connection closed by invalid user pirate 192.168.56.11 port 43968 [preauth]
+2026-11-04T15:14:11+0100 srv-core sshd-session[2991]: Invalid user pirate from 192.168.56.11 port 43974
+2026-11-04T15:14:11+0100 srv-core sshd-session[2991]: Connection closed by invalid user pirate 192.168.56.11 port 43974 [preauth]
+2026-11-04T15:14:11+0100 srv-core sshd-session[2997]: Invalid user pirate from 192.168.56.11 port 43980
+2026-11-04T15:14:11+0100 srv-core sshd-session[2997]: Connection closed by invalid user pirate 192.168.56.11 port 43980 [preauth]
+2026-11-04T15:14:11+0100 srv-core sshd-session[2999]: Invalid user pirate from 192.168.56.11 port 43994
+2026-11-04T15:14:11+0100 srv-core sshd-session[2999]: Connection closed by invalid user pirate 192.168.56.11 port 43994 [preauth]
+
+2026-11-04T15:25:37+0100 srv-core kernel: SSH-NEW IN=enp0s8 OUT= MAC=08:00:27:46:c3:96:08:00:27:8a:55:ce:08:00 SRC=192.168.56.11 DST=192.168.56.10 LEN=60 TOS=0x08 PREC=0x40 TTL=64 ID=8611 DF PROTO=TCP SPT=54398 DPT=2242 WINDOW=64240 RES=0x00 SYN URGP=0 
+2026-11-04T15:36:57+0100 srv-core kernel: SSH-NEW IN=enp0s8 OUT= MAC=08:00:27:46:c3:96:08:00:27:8a:55:ce:08:00 SRC=192.168.56.11 DST=192.168.56.10 LEN=60 TOS=0x08 PREC=0x40 TTL=64 ID=20354 DF PROTO=TCP SPT=48220 DPT=2242 WINDOW=64240 RES=0x00 SYN URGP=0 
+2026-11-04T15:38:02+0100 srv-core kernel: SSH-NEW IN=enp0s8 OUT= MAC=08:00:27:46:c3:96:08:00:27:8a:55:ce:08:00 SRC=192.168.56.11 DST=192.168.56.10 LEN=60 TOS=0x00 PREC=0x00 TTL=64 ID=13698 DF PROTO=TCP SPT=42538 DPT=2242 WINDOW=64240 RES=0x00 SYN URGP=0 
+2026-11-04T15:38:03+0100 srv-core kernel: SSH-NEW IN=enp0s8 OUT= MAC=08:00:27:46:c3:96:08:00:27:8a:55:ce:08:00 SRC=192.168.56.11 DST=192.168.56.10 LEN=60 TOS=0x08 PREC=0x40 TTL=64 ID=36571 DF PROTO=TCP SPT=42546 DPT=2242 WINDOW=64240 RES=0x00 SYN URGP=0 

@@ -1,0 +1,11 @@
+
+$ usermod -aG ssh-admins david ; usermod -aG ssh-admins julien ; getent group ssh-admins
+ssh-admins:x:995:david,julien
+
+$ for k in /etc/ssh/ssh_host_*_key.pub ; do ssh-keygen -lf "$k" ; done
+256 SHA256:7CoovAgY2R0MTRGm8UFgU9A2O0y3fK1MDYk9AmyfrYc no comment (ECDSA)
+256 SHA256:yCUKNNbSbZxtSW2YbpVXS75G+DkMeKfkY4C/OQmZjyc no comment (ED25519)
+3072 SHA256:LpUriL9Mn5ZB+fwJPhMctStt8HsfHaXfADlh9Ad6Htk no comment (RSA)
+
+$ ls -lZ /home/david/.ssh/authorized_keys
+-rw-------. 1 david david unconfined_u:object_r:ssh_home_t:s0 200  3 nov.  20:01 /home/david/.ssh/authorized_keys

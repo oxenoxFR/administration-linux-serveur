@@ -1,0 +1,61 @@
+
+$ auditctl -s | grep enabled
+enabled 1
+
+$ aureport --start this-week --summary -i
+
+Summary Report
+======================
+Range of time in logs: 01/01/1970 01:00:00.000 - 04/11/2026 15:17:10.629
+Selected time for report: 01/11/2026 00:00:00 - 04/11/2026 15:17:10.629
+Number of changes in configuration: 353
+Number of changes to accounts, groups, or roles: 76
+Number of logins: 32
+Number of failed logins: 18
+Number of authentications: 162
+Number of failed authentications: 55
+Number of users: 3
+Number of terminals: 15
+Number of host names: 5
+Number of executables: 56
+Number of commands: 56
+Number of files: 60
+Number of AVC's: 2
+Number of MAC events: 42
+Number of failed syscalls: 2
+Number of anomaly events: 5
+Number of responses to anomaly events: 1
+Number of crypto events: 335
+Number of integrity events: 0
+Number of virt events: 0
+Number of keys: 6
+Number of process IDs: 594
+Number of events: 3660
+
+
+$ aureport --executable --summary -i | head -25
+
+Executable Summary Report
+=================================
+total  file
+=================================
+696  /usr/libexec/openssh/sshd-session
+693  /usr/bin/su
+497  /usr/lib/systemd/systemd
+311  /usr/bin/python3.9
+217  /usr/bin/sudo
+91  /usr/sbin/auditctl
+77  /usr/bin/tee
+66  /usr/bin/login
+38  /usr/bin/chage
+37  /usr/bin/bash
+20  /usr/lib/systemd/systemd-update-utmp
+15  /usr/sbin/useradd
+12  /usr/bin/tail
+11  /usr/bin/journalctl
+10  /usr/sbin/groupadd
+10  /usr/bin/date
+7  /usr/bin/systemctl
+6  /usr/bin/grep
+5  /usr/sbin/aureport
+4  /usr/sbin/tcpdump

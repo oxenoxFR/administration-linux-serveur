@@ -1,0 +1,9 @@
+
+$ systemctl restart systemd-journald ; journalctl --flush
+
+$ ls -ld /var/log/journal/$(cat /etc/machine-id)
+drwxr-xr-x. 2 root root 28  3 nov.  20:06 /var/log/journal/9d46c52452584943a86d300c41a7f996
+
+$ journalctl --disk-usage ; journalctl --verify 2>&1 | tail -5
+Archived and active journals take up 8.0M in the file system.
+PASS: /var/log/journal/9d46c52452584943a86d300c41a7f996/system.journal

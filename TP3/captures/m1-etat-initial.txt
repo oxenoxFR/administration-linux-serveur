@@ -1,0 +1,21 @@
+
+$ systemctl unmask firewalld 2>/dev/null ; systemctl enable --now firewalld
+Created symlink /etc/systemd/system/dbus-org.fedoraproject.FirewallD1.service → /usr/lib/systemd/system/firewalld.service.
+Created symlink /etc/systemd/system/multi-user.target.wants/firewalld.service → /usr/lib/systemd/system/firewalld.service.
+
+$ firewall-cmd --state ; firewall-cmd --get-default-zone ; firewall-cmd --get-active-zones
+running
+public
+public
+  interfaces: enp0s10 enp0s3 enp0s8 enp0s9 bond0 bond0.42
+
+$ nmcli -g NAME con show | while read -r c ; do printf '%s : %s\n' "$c" "$(nmcli -g connection.zone con show "$c")" ; done
+enp0s3 : 
+enp0s8 : 
+bond0 : 
+bond0.42 : 
+bond0-p1 : 
+bond0-p2 : 
+lo : 
+enp0s10 : 
+enp0s9 : 

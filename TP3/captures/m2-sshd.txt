@@ -1,0 +1,72 @@
+
+$ sshd -t && echo 'syntaxe OK'
+syntaxe OK
+
+$ update-crypto-policies --show ; head -6 /etc/ssh/sshd_config.d/50-redhat.conf
+DEFAULT
+# This system is following system-wide crypto policy. The changes to
+# crypto properties (Ciphers, MACs, ...) will not have any effect in
+# this or following included files. To override some configuration option,
+# write it before this block or include it before this file.
+# Please, see manual pages for update-crypto-policies(8) and sshd_config(5).
+Include /etc/crypto-policies/back-ends/opensshserver.config
+
+$ update-crypto-policies --set DEFAULT:NO-SHA1
+Setting system policy to DEFAULT:NO-SHA1
+Note: System-wide crypto policies are applied on application start-up.
+It is recommended to restart the system for the change of policies
+to fully take place.
+
+$ sshd -t && echo 'syntaxe OK'
+syntaxe OK
+
+$ semanage port -a -t ssh_port_t -p tcp 2242 2>/dev/null || semanage port -m -t ssh_port_t -p tcp 2242
+
+$ semanage port -l | grep '^ssh_port_t'
+ssh_port_t                     tcp      2242, 22
+
+$ firewall-cmd --reload ; firewall-cmd --zone=work --list-rich-rules
+success
+rule port port="2242" protocol="tcp" log prefix="SSH-NEW " level="info" limit value="3/m" accept limit value="6/m"
+rule source ipset="helios-blacklist" drop
+rule port port="10051" protocol="tcp" reject
+
+$ systemctl restart sshd ; sleep 2 ; ss -ltnp | grep sshd
+LISTEN 0      128    192.168.56.10:2242      0.0.0.0:*    users:(("sshd",pid=21288,fd=8))
+LISTEN 0      128       10.42.0.10:2242      0.0.0.0:*    users:(("sshd",pid=21288,fd=7))
+
+$ journalctl -u sshd -n 20 --no-pager
+nov. 03 20:01:12 srv-core sshd-session[19987]: pam_unix(sshd:session): session closed for user david
+nov. 03 20:04:26 srv-core sshd-session[20180]: Accepted publickey for david from 192.168.56.1 port 54205 ssh2: ED25519 SHA256:p9a+ywyFRfsHLwH77su7xUCvdULyxBG7CioQwPJzwgQ
+nov. 03 20:04:26 srv-core sshd-session[20180]: pam_unix(sshd:session): session opened for user david(uid=1000) by david(uid=0)
+nov. 03 20:05:32 srv-core sshd[772]: Received signal 15; terminating.
+nov. 03 20:05:32 srv-core systemd[1]: Stopping OpenSSH server daemon...
+nov. 03 20:05:32 srv-core systemd[1]: sshd.service: Deactivated successfully.
+nov. 03 20:05:32 srv-core systemd[1]: Stopped OpenSSH server daemon.
+nov. 03 20:05:32 srv-core systemd[1]: sshd.service: Consumed 1.815s CPU time.
+nov. 03 20:05:32 srv-core systemd[1]: Starting OpenSSH server daemon...
+nov. 03 20:05:32 srv-core sshd[21242]: error: Bind to port 2242 on 10.42.0.10 failed: Permission denied.
+nov. 03 20:05:32 srv-core sshd[21242]: error: Bind to port 2242 on 192.168.56.10 failed: Permission denied.
+nov. 03 20:05:32 srv-core sshd[21242]: fatal: Cannot bind any address.
+nov. 03 20:05:32 srv-core systemd[1]: sshd.service: Main process exited, code=exited, status=255/EXCEPTION
+nov. 03 20:05:32 srv-core systemd[1]: sshd.service: Failed with result 'exit-code'.
+nov. 03 20:05:32 srv-core systemd[1]: Failed to start OpenSSH server daemon.
+nov. 03 20:05:44 srv-core systemd[1]: Stopped OpenSSH server daemon.
+nov. 03 20:05:44 srv-core systemd[1]: Starting OpenSSH server daemon...
+nov. 03 20:05:44 srv-core sshd[21288]: Server listening on 10.42.0.10 port 2242.
+nov. 03 20:05:44 srv-core sshd[21288]: Server listening on 192.168.56.10 port 2242.
+nov. 03 20:05:44 srv-core systemd[1]: Started OpenSSH server daemon.
+
+$ sshd -T | grep -iE '^(ciphers|kexalgorithms|macs|hostkeyalgorithms)'
+ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes256-ctr
+macs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com
+kexalgorithms curve25519-sha256,curve25519-sha256@libssh.org,diffie-hellman-group16-sha512
+hostkeyalgorithms ssh-ed25519,rsa-sha2-512
+
+$ sshd -T | grep -iE 'permitrootlogin|passwordauthentication|allowgroups|maxauthtries|^port |loglevel'
+port 2242
+maxauthtries 3
+permitrootlogin no
+passwordauthentication no
+loglevel VERBOSE
+allowgroups ssh-admins

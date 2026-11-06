@@ -1,0 +1,45 @@
+
+$ journalctl -u sshd --since '-5min' -g 'Invalid user' --no-pager | tail
+-- No entries --
+
+$ systemctl start helios-watch-auth.service
+
+$ journalctl -t helios-watch-auth -n 10 --no-pager
+nov. 04 15:08:34 srv-core helios-watch-auth[2578]: une autre instance tourne deja
+nov. 04 15:10:09 srv-core helios-watch-auth[2671]: analyse terminee : 0 source(s) au-dessus du seuil, 0 nouveau(x) blocage(s)
+nov. 04 15:10:34 srv-core helios-watch-auth[2716]: analyse terminee : 0 source(s) au-dessus du seuil, 0 nouveau(x) blocage(s)
+
+$ firewall-cmd --ipset=helios-blacklist --get-entries
+
+
+$ nft list set inet firewalld helios-blacklist
+table inet firewalld {
+	set helios-blacklist {
+		type ipv4_addr
+		size 65536
+		flags interval
+	}
+}
+
+### Idempotence : un 2e passage ne realerte pas — 2026-11-04 15:10:34
+
+$ systemctl start helios-watch-auth.service ; journalctl -t helios-watch-auth -n 3 --no-pager
+nov. 04 15:10:09 srv-core helios-watch-auth[2671]: analyse terminee : 0 source(s) au-dessus du seuil, 0 nouveau(x) blocage(s)
+nov. 04 15:10:34 srv-core helios-watch-auth[2716]: analyse terminee : 0 source(s) au-dessus du seuil, 0 nouveau(x) blocage(s)
+nov. 04 15:10:35 srv-core helios-watch-auth[2749]: analyse terminee : 0 source(s) au-dessus du seuil, 0 nouveau(x) blocage(s)
+
+### Deblocage de srv-edge — 2026-11-04 15:17:08
+
+$ systemctl stop helios-watch-auth.timer
+
+$ firewall-cmd --ipset=helios-blacklist --remove-entry=192.168.56.11 ; firewall-cmd --permanent --ipset=helios-blacklist --remove-entry=192.168.56.11
+success
+success
+
+$ systemd-run --on-active=11min --timer-property=RemainAfterElapse=no systemctl start helios-watch-auth.timer
+Running timer as unit: run-r437db1467c734eceb36db7170e1d2f1d.timer
+Will run service as unit: run-r437db1467c734eceb36db7170e1d2f1d.service
+
+$ firewall-cmd --ipset=helios-blacklist --get-entries ; echo '(vide = debloque)'
+
+(vide = debloque)

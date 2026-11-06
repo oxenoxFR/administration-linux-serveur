@@ -1,0 +1,13 @@
+
+$ systemd-analyze verify /etc/systemd/system/helios-watch-auth.service /etc/systemd/system/helios-watch-auth.timer
+
+$ systemctl enable --now helios-watch-auth.timer ; systemctl list-timers helios-watch-auth.timer --no-pager
+Created symlink /etc/systemd/system/timers.target.wants/helios-watch-auth.timer → /etc/systemd/system/helios-watch-auth.timer.
+NEXT                        LEFT          LAST PASSED UNIT                    ACTIVATES
+Wed 2026-11-04 15:10:00 CET 1min 26s left -    -      helios-watch-auth.timer helios-watch-auth.service
+
+1 timers listed.
+Pass --all to see loaded but inactive timers, too.
+
+### Code retour 2 si une instance tourne deja — 2026-11-04 15:08:33
+rc avec verrou pris : 2

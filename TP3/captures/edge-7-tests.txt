@@ -1,0 +1,40 @@
+
+$ tcp 192.168.56.10 22
+192.168.56.10:22 -> rejete par le pare-feu (No route to host)
+=> 1. ancien port 22 : OK (refuse)
+
+$ ssh -p 2242 -o StrictHostKeyChecking=accept-new -o ConnectTimeout=5 -o BatchMode=yes david@192.168.56.10 'hostname; id -nG'
+*** Serveur Helios Logistique - acces strictement reserve ***
+Toute connexion est journalisee.
+srv-core
+david wheel ssh-admins
+=> 2. david par cle sur 2242 : OK (accepte)
+
+$ ssh -p 2242 -o StrictHostKeyChecking=accept-new -o ConnectTimeout=5 -o BatchMode=yes root@192.168.56.10 id
+*** Serveur Helios Logistique - acces strictement reserve ***
+Toute connexion est journalisee.
+root@192.168.56.10: Permission denied (publickey).
+=> 3. root : OK (refuse)
+
+$ ssh -p 2242 -o StrictHostKeyChecking=accept-new -o ConnectTimeout=5 -o BatchMode=yes -o PubkeyAuthentication=no -o PreferredAuthentications=password david@192.168.56.10 true
+*** Serveur Helios Logistique - acces strictement reserve ***
+Toute connexion est journalisee.
+david@192.168.56.10: Permission denied (publickey).
+=> 4. mot de passe : OK (refuse)
+
+$ ssh -p 2242 -o StrictHostKeyChecking=accept-new -o ConnectTimeout=5 -o BatchMode=yes nadia@192.168.56.10 true
+*** Serveur Helios Logistique - acces strictement reserve ***
+Toute connexion est journalisee.
+nadia@192.168.56.10: Permission denied (publickey).
+=> 5. nadia hors ssh-admins : OK (refuse)
+
+$ ssh -p 2242 -N -L 9999:localhost:10051 david@192.168.56.10 &  puis  tcp 127.0.0.1 9999
+*** Serveur Helios Logistique - acces strictement reserve ***
+Toute connexion est journalisee.
+channel 2: open failed: administratively prohibited: open failed
+127.0.0.1:9999 -> ouvert (connexion acceptee)
+=> 6. tunnel vers 10051 : OK (refuse a l'usage)
+
+$ ssh -p 2242 -o StrictHostKeyChecking=accept-new -o ConnectTimeout=5 -o BatchMode=yes -o KexAlgorithms=diffie-hellman-group14-sha1 david@192.168.56.10 true
+Unable to negotiate with 192.168.56.10 port 2242: no matching key exchange method found. Their offer: curve25519-sha256,curve25519-sha256@libssh.org,diffie-hellman-group16-sha512,ext-info-s,kex-strict-s-v00@openssh.com
+=> 7. KEX SHA-1 : OK (refuse)

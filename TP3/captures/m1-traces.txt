@@ -1,0 +1,6 @@
+
+$ journalctl -k -g 'SSH-NEW' -n 20 --no-pager
+-- No entries --
+
+$ journalctl -k -g 'REJECT|DROP' -n 20 --no-pager
+-- No entries --

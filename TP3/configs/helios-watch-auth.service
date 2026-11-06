@@ -1,0 +1,9 @@
+[Unit]
+Description=Detection des echecs SSH repetes et blocage de la source (Helios)
+After=firewalld.service
+Requires=firewalld.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/helios-watchauth.sh
+SuccessExitStatus=2

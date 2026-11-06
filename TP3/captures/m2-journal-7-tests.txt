@@ -1,0 +1,56 @@
+2026-11-04T15:25:36+0100 srv-core sshd-session[3685]: main: SHA1 in signatures is disabled for RSA keys
+2026-11-04T15:25:36+0100 srv-core sshd-session[3685]: Connection from 192.168.56.11 port 54368 on 192.168.56.10 port 2242 rdomain ""
+2026-11-04T15:25:36+0100 srv-core sshd-session[3685]: Accepted key ED25519 SHA256:EOZ2oTiaWj5jRSfrvK2tu+JmbD97MNl2JdrIo3J6gaE found at /home/david/.ssh/authorized_keys:2
+2026-11-04T15:25:36+0100 srv-core sshd-session[3685]: Postponed publickey for david from 192.168.56.11 port 54368 ssh2 [preauth]
+2026-11-04T15:25:36+0100 srv-core sshd-session[3685]: Accepted key ED25519 SHA256:EOZ2oTiaWj5jRSfrvK2tu+JmbD97MNl2JdrIo3J6gaE found at /home/david/.ssh/authorized_keys:2
+2026-11-04T15:25:36+0100 srv-core sshd-session[3685]: Accepted publickey for david from 192.168.56.11 port 54368 ssh2: ED25519 SHA256:EOZ2oTiaWj5jRSfrvK2tu+JmbD97MNl2JdrIo3J6gaE
+2026-11-04T15:25:36+0100 srv-core sshd-session[3685]: pam_unix(sshd:session): session opened for user david(uid=1000) by david(uid=0)
+2026-11-04T15:25:36+0100 srv-core sshd-session[3685]: User child is on pid 3688
+2026-11-04T15:25:37+0100 srv-core sshd-session[3685]: pam_unix(sshd:session): session closed for user david
+2026-11-04T15:25:37+0100 srv-core sshd-session[3716]: main: SHA1 in signatures is disabled for RSA keys
+2026-11-04T15:25:37+0100 srv-core sshd-session[3716]: Connection from 192.168.56.11 port 54382 on 192.168.56.10 port 2242 rdomain ""
+2026-11-04T15:25:37+0100 srv-core sshd-session[3716]: User root from 192.168.56.11 not allowed because none of user's groups are listed in AllowGroups
+2026-11-04T15:25:37+0100 srv-core sshd-session[3716]: Connection closed by invalid user root 192.168.56.11 port 54382 [preauth]
+2026-11-04T15:25:37+0100 srv-core sshd[862]: srclimit_penalise: ipv4: new 192.168.56.11/32 deferred penalty of 1 seconds for penalty: connections without attempting authentication
+2026-11-04T15:25:37+0100 srv-core sshd-session[3718]: main: SHA1 in signatures is disabled for RSA keys
+2026-11-04T15:25:37+0100 srv-core sshd-session[3718]: Connection from 192.168.56.11 port 54384 on 192.168.56.10 port 2242 rdomain ""
+2026-11-04T15:25:37+0100 srv-core sshd-session[3718]: Connection closed by authenticating user david 192.168.56.11 port 54384 [preauth]
+2026-11-04T15:25:37+0100 srv-core sshd-session[3720]: main: SHA1 in signatures is disabled for RSA keys
+2026-11-04T15:25:37+0100 srv-core sshd-session[3720]: Connection from 192.168.56.11 port 54390 on 192.168.56.10 port 2242 rdomain ""
+2026-11-04T15:25:37+0100 srv-core sshd-session[3720]: User nadia from 192.168.56.11 not allowed because none of user's groups are listed in AllowGroups
+2026-11-04T15:25:37+0100 srv-core sshd-session[3720]: Connection closed by invalid user nadia 192.168.56.11 port 54390 [preauth]
+2026-11-04T15:25:37+0100 srv-core sshd-session[3722]: main: SHA1 in signatures is disabled for RSA keys
+2026-11-04T15:25:37+0100 srv-core sshd-session[3722]: Connection from 192.168.56.11 port 54398 on 192.168.56.10 port 2242 rdomain ""
+2026-11-04T15:25:37+0100 srv-core sshd-session[3722]: Accepted key ED25519 SHA256:EOZ2oTiaWj5jRSfrvK2tu+JmbD97MNl2JdrIo3J6gaE found at /home/david/.ssh/authorized_keys:2
+2026-11-04T15:25:37+0100 srv-core sshd-session[3722]: Postponed publickey for david from 192.168.56.11 port 54398 ssh2 [preauth]
+2026-11-04T15:25:37+0100 srv-core sshd-session[3722]: Accepted key ED25519 SHA256:EOZ2oTiaWj5jRSfrvK2tu+JmbD97MNl2JdrIo3J6gaE found at /home/david/.ssh/authorized_keys:2
+2026-11-04T15:25:37+0100 srv-core sshd-session[3722]: Accepted publickey for david from 192.168.56.11 port 54398 ssh2: ED25519 SHA256:EOZ2oTiaWj5jRSfrvK2tu+JmbD97MNl2JdrIo3J6gaE
+2026-11-04T15:25:38+0100 srv-core sshd-session[3722]: pam_unix(sshd:session): session opened for user david(uid=1000) by david(uid=0)
+2026-11-04T15:25:38+0100 srv-core sshd-session[3722]: User child is on pid 3725
+2026-11-04T15:36:57+0100 srv-core sshd-session[4329]: main: SHA1 in signatures is disabled for RSA keys
+2026-11-04T15:36:57+0100 srv-core sshd-session[4329]: Connection from 192.168.56.11 port 48220 on 192.168.56.10 port 2242 rdomain ""
+2026-11-04T15:36:57+0100 srv-core sshd-session[4329]: Unable to negotiate with 192.168.56.11 port 48220: no matching key exchange method found. Their offer: diffie-hellman-group14-sha1,ext-info-c,kex-strict-c-v00@openssh.com [preauth]
+2026-11-04T15:36:57+0100 srv-core sshd[862]: srclimit_penalise: ipv4: new 192.168.56.11/32 deferred penalty of 1 seconds for penalty: connections without attempting authentication
+2026-11-04T15:38:02+0100 srv-core sshd-session[4383]: main: SHA1 in signatures is disabled for RSA keys
+2026-11-04T15:38:02+0100 srv-core sshd-session[4383]: Connection from 192.168.56.11 port 42538 on 192.168.56.10 port 2242 rdomain ""
+2026-11-04T15:38:02+0100 srv-core sshd-session[4383]: kex_exchange_identification: Connection closed by remote host
+2026-11-04T15:38:02+0100 srv-core sshd-session[4383]: Connection closed by 192.168.56.11 port 42538
+2026-11-04T15:38:02+0100 srv-core sshd[862]: srclimit_penalise: ipv4: new 192.168.56.11/32 deferred penalty of 1 seconds for penalty: connections without attempting authentication
+2026-11-04T15:38:03+0100 srv-core sshd-session[4384]: main: SHA1 in signatures is disabled for RSA keys
+2026-11-04T15:38:03+0100 srv-core sshd-session[4384]: Connection from 192.168.56.11 port 42546 on 192.168.56.10 port 2242 rdomain ""
+2026-11-04T15:38:03+0100 srv-core sshd-session[4384]: Accepted key ED25519 SHA256:EOZ2oTiaWj5jRSfrvK2tu+JmbD97MNl2JdrIo3J6gaE found at /home/david/.ssh/authorized_keys:2
+2026-11-04T15:38:03+0100 srv-core sshd-session[4384]: Postponed publickey for david from 192.168.56.11 port 42546 ssh2 [preauth]
+2026-11-04T15:38:03+0100 srv-core sshd-session[4384]: Accepted key ED25519 SHA256:EOZ2oTiaWj5jRSfrvK2tu+JmbD97MNl2JdrIo3J6gaE found at /home/david/.ssh/authorized_keys:2
+2026-11-04T15:38:03+0100 srv-core sshd-session[4384]: Accepted publickey for david from 192.168.56.11 port 42546 ssh2: ED25519 SHA256:EOZ2oTiaWj5jRSfrvK2tu+JmbD97MNl2JdrIo3J6gaE
+2026-11-04T15:38:03+0100 srv-core sshd-session[4384]: pam_unix(sshd:session): session opened for user david(uid=1000) by david(uid=0)
+2026-11-04T15:38:03+0100 srv-core sshd-session[4384]: User child is on pid 4399
+2026-11-04T15:38:04+0100 srv-core sshd-session[4384]: pam_unix(sshd:session): session closed for user david
+2026-11-04T15:39:09+0100 srv-core sshd[862]: srclimit_penalise: ipv4: new 192.168.56.11/32 deferred penalty of 1 seconds for penalty: connections without attempting authentication
+2026-11-04T15:39:09+0100 srv-core sshd-session[4486]: main: SHA1 in signatures is disabled for RSA keys
+2026-11-04T15:39:09+0100 srv-core sshd-session[4486]: Connection from 192.168.56.11 port 39358 on 192.168.56.10 port 2242 rdomain ""
+2026-11-04T15:39:09+0100 srv-core sshd-session[4486]: kex_exchange_identification: Connection closed by remote host
+2026-11-04T15:39:09+0100 srv-core sshd-session[4486]: Connection closed by 192.168.56.11 port 39358
+2026-11-04T15:39:09+0100 srv-core sshd-session[4487]: main: SHA1 in signatures is disabled for RSA keys
+2026-11-04T15:39:09+0100 srv-core sshd-session[4487]: Connection from 192.168.56.11 port 39366 on 192.168.56.10 port 2242 rdomain ""
+2026-11-04T15:39:09+0100 srv-core sshd-session[4487]: kex_exchange_identification: Connection closed by remote host
+2026-11-04T15:39:09+0100 srv-core sshd-session[4487]: Connection closed by 192.168.56.11 port 39366

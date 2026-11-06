@@ -1,0 +1,8 @@
+
+$ journalctl --list-boots
+IDX BOOT ID                          FIRST ENTRY                 LAST ENTRY
+ -1 89ecb4e0b16b4d3997509adc171595d1 Tue 2026-11-03 16:03:06 CET Tue 2026-11-03 20:11:06 CET
+  0 d243de36956f4340969e422508c79e84 Wed 2026-11-04 15:00:36 CET Wed 2026-11-04 15:08:30 CET
+
+$ auditctl -s | grep enabled
+enabled 1

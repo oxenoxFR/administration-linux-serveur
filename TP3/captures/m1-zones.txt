@@ -1,0 +1,34 @@
+
+$ nmcli con mod 'enp0s3' connection.zone drop
+
+$ nmcli con mod 'enp0s8' connection.zone work
+
+$ nmcli con mod bond0 connection.zone internal
+
+$ nmcli con mod bond0.42 connection.zone internal
+
+$ firewall-cmd --set-default-zone=drop
+success
+
+$ firewall-cmd --permanent --zone=work --add-service=ssh ; firewall-cmd --permanent --zone=work --add-source=192.168.56.0/24
+Warning: ALREADY_ENABLED: ssh
+success
+success
+
+$ firewall-cmd --permanent --zone=internal --add-service=ssh ; firewall-cmd --permanent --zone=internal --add-port=10051/tcp
+Warning: ALREADY_ENABLED: ssh
+success
+success
+
+$ firewall-cmd --reload
+success
+
+$ firewall-cmd --get-default-zone ; firewall-cmd --get-active-zones
+drop
+drop
+  interfaces: enp0s3 enp0s9 enp0s10
+internal
+  interfaces: bond0.42 bond0
+work
+  interfaces: enp0s8
+  sources: 192.168.56.0/24

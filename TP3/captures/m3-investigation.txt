@@ -1,0 +1,156 @@
+
+### 1. Avertissements de sshd sur 2 h — 2026-11-04 15:08:30
+
+$ journalctl -u sshd.service --since '-2h' -p warning -o short-iso --no-pager | tail -20
+-- No entries --
+
+### 2. Utilisateurs inconnus, echecs et connexions acceptees — 2026-11-04 15:08:31
+
+$ journalctl _SYSTEMD_UNIT=sshd.service -g 'Invalid user|Failed|Accepted' --no-pager | tail -20
+nov. 03 16:06:06 srv-core sshd-session[2004]: Accepted password for david from 192.168.56.1 port 54237 ssh2
+nov. 03 16:06:12 srv-core sshd-session[2044]: Accepted password for david from 192.168.56.1 port 54240 ssh2
+nov. 03 16:15:42 srv-core sshd-session[4928]: Accepted password for david from 192.168.56.1 port 49439 ssh2
+nov. 03 16:15:46 srv-core sshd-session[4967]: Accepted password for david from 192.168.56.1 port 49445 ssh2
+nov. 03 16:27:09 srv-core sshd-session[7458]: Accepted password for david from 192.168.56.1 port 54144 ssh2
+nov. 03 16:47:14 srv-core sshd-session[9250]: Accepted password for david from 192.168.56.1 port 54191 ssh2
+nov. 03 16:47:22 srv-core sshd-session[9290]: Accepted password for david from 192.168.56.1 port 54195 ssh2
+nov. 03 16:59:04 srv-core sshd-session[10406]: Accepted password for david from 192.168.56.1 port 54883 ssh2
+nov. 03 17:03:41 srv-core sshd-session[11190]: Accepted password for david from 192.168.56.1 port 62262 ssh2
+nov. 03 17:11:04 srv-core sshd-session[11701]: Accepted password for david from 192.168.56.1 port 53294 ssh2
+nov. 03 17:11:07 srv-core sshd-session[11736]: Accepted password for david from 192.168.56.1 port 53296 ssh2
+nov. 03 17:11:13 srv-core sshd-session[11771]: Accepted password for david from 192.168.56.1 port 53298 ssh2
+nov. 03 19:42:34 srv-core sshd-session[18989]: Accepted password for david from 192.168.56.1 port 51560 ssh2
+nov. 03 19:42:35 srv-core sshd-session[19026]: Accepted publickey for david from 192.168.56.1 port 51564 ssh2: ED25519 SHA256:p9a+ywyFRfsHLwH77su7xUCvdULyxBG7CioQwPJzwgQ
+nov. 03 20:01:11 srv-core sshd-session[19946]: Accepted password for david from 192.168.56.11 port 48906 ssh2
+nov. 03 20:01:11 srv-core sshd-session[19987]: Accepted publickey for david from 192.168.56.11 port 42158 ssh2: ED25519 SHA256:EOZ2oTiaWj5jRSfrvK2tu+JmbD97MNl2JdrIo3J6gaE
+nov. 03 20:04:26 srv-core sshd-session[20180]: Accepted publickey for david from 192.168.56.1 port 54205 ssh2: ED25519 SHA256:p9a+ywyFRfsHLwH77su7xUCvdULyxBG7CioQwPJzwgQ
+-- Boot d243de36956f4340969e422508c79e84 --
+
+### 3. Toute l'activite d'authentification du jour (facility authpriv) — 2026-11-04 15:08:31
+
+$ journalctl --facility=authpriv --since today --no-pager | tail -20
+nov. 04 15:00:59 srv-core sshd[862]: Server listening on 10.42.0.10 port 2242.
+nov. 04 15:00:59 srv-core sshd[862]: Server listening on 192.168.56.10 port 2242.
+nov. 04 15:04:12 srv-core unix_chkpwd[2140]: password check failed for user (david)
+nov. 04 15:04:12 srv-core login[866]: pam_unix(login:auth): authentication failure; logname=LOGIN uid=0 euid=0 tty=/dev/tty1 ruser= rhost=  user=david
+nov. 04 15:04:14 srv-core login[866]: FAILED LOGIN 1 FROM tty1 FOR david, Authentication failure
+nov. 04 15:04:19 srv-core systemd[2149]: pam_unix(systemd-user:session): session opened for user david(uid=1000) by david(uid=0)
+nov. 04 15:04:19 srv-core login[866]: pam_unix(login:session): session opened for user david(uid=1000) by LOGIN(uid=0)
+nov. 04 15:04:19 srv-core login[866]: LOGIN ON tty1 BY david
+nov. 04 15:08:30 srv-core sudo[2361]:    david : TTY=tty1 ; PWD=/home/david ; USER=root ; COMMAND=/bin/bash /root/TP3/scripts/tp3-core-b.sh
+nov. 04 15:08:30 srv-core sudo[2361]: pam_unix(sudo:session): session opened for user root(uid=0) by david(uid=1000)
+
+### 4. Ce qu'a fait nadia (UID 5101) aujourd'hui — 2026-11-04 15:08:31
+
+$ journalctl _UID=5101 --since today --no-pager | tail
+-- No entries --
+
+### 5. Utilisation de sudo au format JSON — 2026-11-04 15:08:31
+
+$ journalctl -t sudo --since today -o json-pretty | head -40
+{
+	"_BOOT_ID" : "d243de36956f4340969e422508c79e84",
+	"_CAP_EFFECTIVE" : "1ffffffffff",
+	"_AUDIT_LOGINUID" : "1000",
+	"SYSLOG_IDENTIFIER" : "sudo",
+	"PRIORITY" : "5",
+	"SYSLOG_FACILITY" : "10",
+	"_SOURCE_REALTIME_TIMESTAMP" : "1793801310728100",
+	"_AUDIT_SESSION" : "1",
+	"SYSLOG_TIMESTAMP" : "Nov  4 15:08:30 ",
+	"_SELINUX_CONTEXT" : "unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023",
+	"_SYSTEMD_USER_SLICE" : "-.slice",
+	"_SYSTEMD_OWNER_UID" : "1000",
+	"_SYSTEMD_CGROUP" : "/user.slice/user-1000.slice/session-1.scope",
+	"__REALTIME_TIMESTAMP" : "1793801310728630",
+	"_SYSTEMD_UNIT" : "session-1.scope",
+	"_CMDLINE" : "sudo bash /root/TP3/scripts/tp3-core-b.sh",
+	"_SYSTEMD_INVOCATION_ID" : "d20a6aa5e9014dd7b4971a4b03ef17de",
+	"__CURSOR" : "s=c66209dc7948494f8119a5c800c5d829;i=e66;b=d243de36956f4340969e422508c79e84;m=1c94fe81;t=65f73e9ec71b6;x=80f6331ed28fddd8",
+	"MESSAGE" : "   david : TTY=tty1 ; PWD=/home/david ; USER=root ; COMMAND=/bin/bash /root/TP3/scripts/tp3-core-b.sh",
+	"_UID" : "1000",
+	"_COMM" : "sudo",
+	"_SYSTEMD_SLICE" : "user-1000.slice",
+	"_RUNTIME_SCOPE" : "system",
+	"_HOSTNAME" : "srv-core",
+	"_PID" : "2361",
+	"_EXE" : "/usr/bin/sudo",
+	"_SYSTEMD_SESSION" : "1",
+	"_MACHINE_ID" : "9d46c52452584943a86d300c41a7f996",
+	"_TRANSPORT" : "syslog",
+	"__MONOTONIC_TIMESTAMP" : "479526529",
+	"_GID" : "1000"
+}
+{
+	"_SYSTEMD_SLICE" : "user-1000.slice",
+	"_EXE" : "/usr/bin/sudo",
+	"_HOSTNAME" : "srv-core",
+	"_CAP_EFFECTIVE" : "1ffffffffff",
+	"_SOURCE_REALTIME_TIMESTAMP" : "1793801310747409",
+	"_GID" : "0",
+
+### 6. Erreurs du demarrage precedent — 2026-11-04 15:08:31
+
+$ journalctl -b -1 -p err --no-pager | tail -20
+nov. 03 16:28:11 srv-core sudo[8200]: pam_unix(sudo:auth): conversation failed
+nov. 03 16:28:11 srv-core sudo[8200]: pam_unix(sudo:auth): auth could not identify password for [nadia]
+nov. 03 16:28:11 srv-core sudo[8200]:    nadia : command not allowed ; PWD=/home/nadia ; USER=root ; COMMAND=/bin/vim -E -s -c !/usr/bin/id -c q! /srv/helios/projets/transport/tournee-nadia.csv
+nov. 03 16:28:12 srv-core sudoedit[8250]: pam_unix(sudo:auth): conversation failed
+nov. 03 16:28:12 srv-core sudoedit[8250]: pam_unix(sudo:auth): auth could not identify password for [nadia]
+nov. 03 16:48:03 srv-core sudo[9756]: pam_unix(sudo:auth): conversation failed
+nov. 03 16:48:03 srv-core sudo[9756]: pam_unix(sudo:auth): auth could not identify password for [nadia]
+nov. 03 16:48:03 srv-core sudo[9756]:    nadia : command not allowed ; PWD=/home/nadia ; USER=root ; COMMAND=/bin/vim -E -s -c !/usr/bin/id -c q! /srv/helios/projets/transport/tournee-nadia.csv
+nov. 03 16:48:04 srv-core sudoedit[9806]: pam_unix(sudo:auth): conversation failed
+nov. 03 16:48:04 srv-core sudoedit[9806]: pam_unix(sudo:auth): auth could not identify password for [nadia]
+nov. 03 16:59:54 srv-core sudoedit[10915]: pam_unix(sudo:auth): conversation failed
+nov. 03 16:59:54 srv-core sudoedit[10915]: pam_unix(sudo:auth): auth could not identify password for [nadia]
+nov. 03 20:05:32 srv-core sshd[21242]: error: Bind to port 2242 on 10.42.0.10 failed: Permission denied.
+nov. 03 20:05:32 srv-core sshd[21242]: error: Bind to port 2242 on 192.168.56.10 failed: Permission denied.
+nov. 03 20:05:32 srv-core sshd[21242]: fatal: Cannot bind any address.
+nov. 03 20:05:32 srv-core systemd[1]: Failed to start OpenSSH server daemon.
+nov. 03 20:06:05 srv-core sudo[21495]:   julien : a password is required ; PWD=/home/julien ; USER=root ; COMMAND=/usr/bin/systemctl status helios-collect.service
+nov. 03 20:11:00 srv-core sshd-session[20180]: error: mm_reap: preauth child terminated by signal 15
+nov. 03 20:11:01 srv-core dbus-broker-launch[729]: Activation request for 'org.freedesktop.nm_dispatcher' failed.
+nov. 03 20:11:01 srv-core dbus-broker-launch[729]: Activation request for 'org.freedesktop.nm_dispatcher' failed.
+
+### 7. Echecs et sessions de connexion — 2026-11-04 15:08:31
+
+$ lastb -n 15 ; last -F -n 10
+david    tty1                          Wed Nov  4 15:04 - 15:04  (00:00)
+nadia    pts/3                         Tue Nov  3 16:59 - 16:59  (00:00)
+nadia    pts/3                         Tue Nov  3 16:59 - 16:59  (00:00)
+nadia    pts/3                         Tue Nov  3 16:59 - 16:59  (00:00)
+nadia    pts/3                         Tue Nov  3 16:59 - 16:59  (00:00)
+nadia    pts/3                         Tue Nov  3 16:59 - 16:59  (00:00)
+nadia    pts/3                         Tue Nov  3 16:59 - 16:59  (00:00)
+nadia    pts/3                         Tue Nov  3 16:59 - 16:59  (00:00)
+nadia    pts/3                         Tue Nov  3 16:48 - 16:48  (00:00)
+nadia    pts/3                         Tue Nov  3 16:47 - 16:47  (00:00)
+nadia    pts/3                         Tue Nov  3 16:47 - 16:47  (00:00)
+nadia    pts/3                         Tue Nov  3 16:47 - 16:47  (00:00)
+nadia    pts/3                         Tue Nov  3 16:47 - 16:47  (00:00)
+nadia    pts/3                         Tue Nov  3 16:47 - 16:47  (00:00)
+nadia    pts/3                         Tue Nov  3 16:27 - 16:27  (00:00)
+
+btmp commence Mon Nov  2 16:06:10 2026
+david    tty1                          Wed Nov  4 15:04:19 2026   still logged in
+reboot   system boot  5.14.0-687.10.1. Wed Nov  4 15:00:48 2026   still running
+david    pts/0        192.168.56.1     Tue Nov  3 20:04:26 2026 - Tue Nov  3 20:11:00 2026  (00:06)
+david    pts/0        192.168.56.1     Tue Nov  3 16:47:22 2026 - Tue Nov  3 19:42:06 2026  (02:54)
+david    pts/0        192.168.56.1     Tue Nov  3 16:15:46 2026 - Tue Nov  3 16:46:25 2026  (00:30)
+david    tty1                          Tue Nov  3 16:07:06 2026 - down                      (04:04)
+david    pts/0        192.168.56.1     Tue Nov  3 16:06:12 2026 - Tue Nov  3 16:11:42 2026  (00:05)
+reboot   system boot  5.14.0-687.10.1. Tue Nov  3 16:03:18 2026 - Tue Nov  3 20:11:06 2026  (04:07)
+david    pts/0        192.168.56.1     Mon Nov  2 19:32:16 2026 - Mon Nov  2 19:35:15 2026  (00:02)
+reboot   system boot  5.14.0-687.10.1. Mon Nov  2 19:31:07 2026 - Mon Nov  2 22:21:22 2026  (02:50)
+
+wtmp commence Mon Nov  2 16:05:20 2026
+
+$ lslogins -u --output=USER,PWD-CHANGE,PWD-EXPIR,LAST-LOGIN,FAILED-LOGIN
+USER        PWD-CHANGE    PWD-EXPIR   LAST-LOGIN FAILED-LOGIN
+root       1969-déc.31              nov.03/16:18 nov.02/16:10
+david      1969-déc.31                     15:04 15:04
+julien    nov.02/01:00              nov.03/20:06 
+nadia     nov.03/01:00              nov.03/17:04 nov.03/16:59
+tarek     nov.03/01:00              nov.03/16:19 
+audit-ext nov.03/01:00 nov.24/01:00 nov.03/16:19 

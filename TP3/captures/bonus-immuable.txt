@@ -1,0 +1,57 @@
+
+$ augenrules --load ; auditctl -s | grep enabled
+Old style watch rules are slower
+Old style watch rules are slower
+Old style watch rules are slower
+Old style watch rules are slower
+Old style watch rules are slower
+Old style watch rules are slower
+Old style watch rules are slower
+Old style watch rules are slower
+Old style watch rules are slower
+No rules
+enabled 1
+failure 1
+pid 703
+rate_limit 0
+backlog_limit 8192
+lost 0
+backlog 49
+backlog_wait_time 60000
+backlog_wait_time_actual 0
+enabled 1
+failure 1
+pid 703
+rate_limit 0
+backlog_limit 8192
+lost 0
+backlog 4
+backlog_wait_time 60000
+backlog_wait_time_actual 0
+enabled 1
+failure 1
+pid 703
+rate_limit 0
+backlog_limit 8192
+lost 0
+backlog 24
+backlog_wait_time 60000
+backlog_wait_time_actual 0
+enabled 2
+failure 1
+pid 703
+rate_limit 0
+backlog_limit 8192
+lost 0
+backlog 29
+backlog_wait_time 60000
+backlog_wait_time_actual 0
+enabled 2
+
+$ auditctl -D
+Error deleting rule (Operation not permitted)
+There was an error while processing parameters
+
+$ tail -2 /etc/audit/rules.d/90-helios.rules
+## Pare-feu
+-w /etc/firewalld/ -p wa -k firewall
