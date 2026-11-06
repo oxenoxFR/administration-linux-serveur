@@ -1,0 +1,19 @@
+=== E6 — Pare-feu : 8080 seulement dans internal — 2026-11-05 16:35:51 ===
+$ firewall-cmd --zone=internal --query-port=8080/tcp ; firewall-cmd --permanent --zone=internal --query-port=8080/tcp
+yes
+yes
+$ firewall-cmd --zone=internal --list-all | grep -vE '^  (icmp-block-inversion|forward-ports|source-ports|icmp-blocks|protocols|masquerade):'
+internal (active)
+  target: default
+  interfaces: bond0 bond0.42
+  sources: 
+  services: 
+  ports: 10051/tcp 2242/tcp 8080/tcp
+  forward: yes
+  rich rules: 
+	rule source ipset="helios-blacklist" drop
+$ n=0 ; for z in $(firewall-cmd --get-zones) ; do [ $z = internal ] && continue ; for m in '' --permanent ; do firewall-cmd $m --zone=$z --list-all | grep -q 8080 && { echo "8080 dans $z $m" ; n=1 ; } ; done ; done ; [ $n = 0 ] && echo 'aucune autre zone (runtime et permanent) ne contient 8080'
+aucune autre zone (runtime et permanent) ne contient 8080
+$ firewall-cmd --get-default-zone ; nft list ruleset | grep -n 8080
+drop
+542:		tcp dport 8080 accept

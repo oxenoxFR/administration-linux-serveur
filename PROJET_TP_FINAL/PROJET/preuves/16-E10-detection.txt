@@ -1,0 +1,15 @@
+=== E10 — L'audit detecte les pannes (puis on repare) — 2026-11-05 21:18:41 ===
+$ firewall-cmd -q --zone=internal --remove-port=8080/tcp ; echo '8080 retire du pare-feu (runtime)' ; /usr/local/sbin/helios-suivi-audit.sh | grep -E '^\[KO\]|^Bilan' | cut -c1-124 ; echo "rc=${PIPESTATUS[0]}" ; firewall-cmd -q --zone=internal --add-port=8080/tcp ; echo '8080 remis'
+8080 retire du pare-feu (runtime)
+[KO] E6 — Pare-feu (8080 seulement dans internal) : 8080/tcp absent de internal (runtime)
+Bilan : 8/9
+rc=1
+8080 remis
+$ L=$(ls -1 /srv/helios/archives/suivi/suivi-*.tar.gz | sort | tail -1) ; cp -p $L.sha256 /root/sha.bak ; echo '0000  '$(basename $L) > $L.sha256 ; echo 'empreinte de la derniere sauvegarde faussee' ; /usr/local/sbin/helios-suivi-audit.sh | grep -E '^\[KO\]|^Bilan' | cut -c1-124 ; cp -p /root/sha.bak $L.sha256 ; echo 'empreinte remise'
+empreinte de la derniere sauvegarde faussee
+[KO] E9 — Sauvegarde et restauration : empreinte invalide pour suivi-20261105-165001.tar.gz
+Bilan : 8/9
+empreinte remise
+$ /usr/local/sbin/helios-suivi-audit.sh | tail -1 ; echo "rc=${PIPESTATUS[0]}"
+Bilan : 9/9
+rc=0

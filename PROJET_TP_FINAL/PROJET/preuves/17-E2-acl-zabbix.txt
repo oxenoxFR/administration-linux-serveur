@@ -1,0 +1,19 @@
+=== Justification (b) — zabbix : sans entree, avec r-x, avec --x — 2026-11-05 21:42:05 ===
+$ getfacl -p /srv/helios/suivi/www | grep zabbix
+user:zabbix:--x
+$ setfacl -x u:zabbix /srv/helios/suivi/www ; echo '--- 1. entree user:zabbix RETIREE ---' ; runuser -u zabbix -- stat -c '%n %Y' /srv/helios/suivi/www/etat.json ; zabbix_get -s 127.0.0.1 -k helios.suivi.age
+--- 1. entree user:zabbix RETIREE ---
+stat: cannot statx '/srv/helios/suivi/www/etat.json': Permission denied
+stat: impossible d'exécuter statx '/srv/helios/suivi/www/etat.json': Permission non accordée
+$ setfacl -m u:zabbix:r-x /srv/helios/suivi/www ; echo '--- 2. user:zabbix:r-x ---' ; runuser -u zabbix -- ls /srv/helios/suivi/www ; zabbix_get -s 127.0.0.1 -k helios.suivi.age
+--- 2. user:zabbix:r-x ---
+etat.json
+index.html
+4
+$ setfacl -m u:zabbix:--x /srv/helios/suivi/www ; echo '--- 3. user:zabbix:--x (configuration retenue) ---' ; runuser -u zabbix -- ls /srv/helios/suivi/www ; zabbix_get -s 127.0.0.1 -k helios.suivi.age
+--- 3. user:zabbix:--x (configuration retenue) ---
+ls: cannot open directory '/srv/helios/suivi/www': Permission denied
+4
+$ getfacl -p /srv/helios/suivi/www | grep zabbix ; /usr/local/sbin/helios-suivi-audit.sh | tail -1
+user:zabbix:--x
+Bilan : 9/9

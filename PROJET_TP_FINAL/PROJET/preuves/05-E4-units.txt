@@ -1,0 +1,174 @@
+=== E4 — Units : portail et publication (1/2) — 2026-11-05 16:34:19 ===
+$ systemd-analyze verify /etc/systemd/system/helios-suivi.service /etc/systemd/system/helios-suivi-publish.service /etc/systemd/system/helios-suivi-publish.timer && echo 'verify : OK'
+verify : OK
+$ systemctl status helios-suivi.service --no-pager -n 0 | head -11
+* helios-suivi.service - Portail de suivi des tournees Helios (HTTP 8080, lecture seule)
+     Loaded: loaded (/etc/systemd/system/helios-suivi.service; enabled; preset: disabled)
+     Active: active (running) since Thu 2026-11-05 16:34:20 CET; 2s ago
+       Docs: https://wiki.helios.lan/suivi
+   Main PID: 4710 (python3)
+      Tasks: 1 (limit: 10632)
+     Memory: 9.8M (max: 128.0M available: 118.1M peak: 10.2M)
+        CPU: 198ms
+     CGroup: /system.slice/helios-suivi.service
+             `-4710 /usr/bin/python3 -m http.server 8080 --bind 0.0.0.0 --directory /srv/helios/suivi/www
+$ systemctl list-dependencies helios.target --plain --no-pager
+helios.target
+  helios-collect.service
+  helios-suivi.service
+  multi-user.target
+  auditd.service
+  chronyd.service
+  crond.service
+  firewalld.service
+  helios-collect.service
+  irqbalance.service
+  kdump.service
+  NetworkManager.service
+  rsyslog.service
+  sshd.service
+  sssd.service
+  sysstat.service
+  systemd-ask-password-wall.path
+  systemd-logind.service
+  systemd-update-utmp-runlevel.service
+  systemd-user-sessions.service
+  zabbix-agent2.service
+  basic.target
+  -.mount
+  microcode.service
+  paths.target
+  helios-inbox.path
+  slices.target
+  -.slice
+  system.slice
+  sockets.target
+  dbus.socket
+  dm-event.socket
+  sssd-kcm.socket
+  systemd-coredump.socket
+  systemd-initctl.socket
+  systemd-journald-dev-log.socket
+  systemd-journald.socket
+  systemd-udevd-control.socket
+  systemd-udevd-kernel.socket
+  sysinit.target
+  dev-hugepages.mount
+  dev-mqueue.mount
+  dracut-shutdown.service
+  kmod-static-nodes.service
+  ldconfig.service
+  lvm2-lvmpolld.socket
+  lvm2-monitor.service
+  nis-domainname.service
+  proc-sys-fs-binfmt_misc.automount
+  selinux-autorelabel-mark.service
+  sys-fs-fuse-connections.mount
+  sys-kernel-config.mount
+  sys-kernel-debug.mount
+  sys-kernel-tracing.mount
+  systemd-ask-password-console.path
+  systemd-binfmt.service
+  systemd-boot-random-seed.service
+  systemd-boot-update.service
+  systemd-firstboot.service
+  systemd-hwdb-update.service
+  systemd-journal-catalog-update.service
+  systemd-journal-flush.service
+  systemd-journald.service
+  systemd-machine-id-commit.service
+  systemd-modules-load.service
+  systemd-network-generator.service
+  systemd-pcrmachine.service
+  systemd-pcrphase-sysinit.service
+  systemd-pcrphase.service
+  systemd-pstore.service
+  systemd-random-seed.service
+  systemd-repart.service
+  systemd-sysctl.service
+  systemd-sysusers.service
+  systemd-tmpfiles-setup-dev.service
+  systemd-tmpfiles-setup.service
+  systemd-udev-trigger.service
+  systemd-udevd.service
+  systemd-update-done.service
+  systemd-update-utmp.service
+  cryptsetup.target
+  integritysetup.target
+  local-fs.target
+  -.mount
+  boot.mount
+  systemd-remount-fs.service
+  swap.target
+  dev-mapper-rl\x2dswap.swap
+  veritysetup.target
+  timers.target
+  dnf-makecache.timer
+  helios-archive.timer
+  helios-suivi-publish.timer
+  helios-watch-auth.timer
+  logrotate.timer
+  systemd-tmpfiles-clean.timer
+  getty.target
+  getty@tty1.service
+  remote-fs.target
+$ systemctl show -p User -p Restart -p MemoryMax -p CPUQuotaPerSecUSec helios-suivi.service
+Restart=on-failure
+CPUQuotaPerSecUSec=500ms
+MemoryMax=134217728
+User=helios-suivi
+$ systemctl show -p User -p Result -p ExecMainStatus helios-suivi-publish.service ; systemctl list-timers helios-suivi-publish.timer --no-pager | head -2
+Result=success
+ExecMainStatus=0
+User=helios-suivi
+NEXT                        LEFT          LAST PASSED UNIT                       ACTIVATES
+Thu 2026-11-05 16:36:00 CET 1min 36s left -    -      helios-suivi-publish.timer helios-suivi-publish.service
+$ curl -s -o /dev/null -w 'GET /          -> %{http_code}\n' http://127.0.0.1:8080/ ; curl -s -o /dev/null -w 'GET /etat.json -> %{http_code}\n' http://127.0.0.1:8080/etat.json
+GET /          -> 200
+GET /etat.json -> 200
+=== E4 — Durcissement, crash et non-modification des units du TP (2/2) — 2026-11-05 16:34:53 ===
+$ systemd-analyze security --no-pager helios-suivi.service | tail -1
+-> Overall exposure level for helios-suivi.service: 1.2 OK :-)
+$ echo 'Le portail (espace de noms du service, en helios-suivi) essaie d ecrire :' ; for p in /srv/helios/suivi/www/essai /tmp/essai /var/tmp/essai /dev/shm/essai /var/lib/helios/essai ; do if nsenter -t 4710 -m -S $(id -u helios-suivi) -G $(id -g helios-suivi) -- touch $p 2>/tmp/err ; then echo "  ECRITURE POSSIBLE : $p" ; else sed 's/^/  refuse -> /' /tmp/err ; fi ; done ; rm -f /srv/helios/suivi/www/essai /tmp/err
+Le portail (espace de noms du service, en helios-suivi) essaie d ecrire :
+  refuse -> touch: cannot touch '/srv/helios/suivi/www/essai': Read-only file system
+  refuse -> touch: cannot touch '/tmp/essai': Read-only file system
+  refuse -> touch: cannot touch '/var/tmp/essai': Read-only file system
+  refuse -> touch: cannot touch '/dev/shm/essai': Read-only file system
+  refuse -> touch: cannot touch '/var/lib/helios/essai': Read-only file system
+$ P1=$(systemctl show -p MainPID --value helios-suivi.service) ; t0=$(date +%s.%N) ; kill -9 $P1 ; sleep 0.5 ; for i in $(seq 100) ; do [ "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8080/etat.json)" = 200 ] && break ; sleep 0.2 ; done ; echo "kill -9 sur PID $P1 -> nouveau PID $(systemctl show -p MainPID --value helios-suivi.service), de nouveau 200 apres $(depuis $t0) s" ; systemctl show -p NRestarts helios-suivi.service
+kill -9 sur PID 4710 -> nouveau PID 4855, de nouveau 200 apres 2.74 s
+NRestarts=1
+$ cd /etc/systemd/system && sha256sum --quiet -c /root/PROJET/preuves/00-units-tp-avant.sha256 && echo 'units des TP1 a TP3 : identiques avant/apres le projet'
+units des TP1 a TP3 : identiques avant/apres le projet
+$ find /etc/systemd/system -newer /root/PROJET/preuves/00-units-tp-avant.sha256 \( -type f -o -type l \) | sort
+/etc/systemd/system/helios-suivi-publish.service
+/etc/systemd/system/helios-suivi-publish.timer
+/etc/systemd/system/helios-suivi.service
+/etc/systemd/system/helios.target.wants/helios-suivi.service
+/etc/systemd/system/multi-user.target.wants/sysstat.service
+/etc/systemd/system/multi-user.target.wants/zabbix-agent2.service
+/etc/systemd/system/sysstat.service.wants/sysstat-collect.timer
+/etc/systemd/system/sysstat.service.wants/sysstat-summary.timer
+/etc/systemd/system/timers.target.wants/helios-suivi-publish.timer
+=== E4 — Etat du portail et rattachement a helios.target — 2026-11-05 16:50:51 ===
+$ systemctl status helios-suivi.service --no-pager -n 0 | head -12
+* helios-suivi.service - Portail de suivi des tournees Helios (HTTP 8080, lecture seule)
+     Loaded: loaded (/etc/systemd/system/helios-suivi.service; enabled; preset: disabled)
+     Active: active (running) since Thu 2026-11-05 16:50:25 CET; 25s ago
+       Docs: https://wiki.helios.lan/suivi
+   Main PID: 11803 (python3)
+      Tasks: 1 (limit: 10632)
+     Memory: 9.5M (max: 128.0M available: 118.4M peak: 9.7M)
+        CPU: 165ms
+     CGroup: /system.slice/helios-suivi.service
+             `-11803 /usr/bin/python3 -m http.server 8080 --bind 0.0.0.0 --directory /srv/helios/suivi/www
+$ systemctl show -p Wants helios.target ; ls -l /etc/systemd/system/helios.target.wants/
+Wants=helios-suivi.service helios-collect.service
+total 0
+lrwxrwxrwx. 1 root root 42 Nov  2 17:17 helios-collect.service -> /etc/systemd/system/helios-collect.service
+lrwxrwxrwx. 1 root root 40 Nov  5 16:34 helios-suivi.service -> /etc/systemd/system/helios-suivi.service
+$ systemctl list-timers --no-pager | grep -E 'helios-suivi|NEXT'
+NEXT                        LEFT          LAST                        PASSED    UNIT                         ACTIVATES
+Thu 2026-11-05 16:52:00 CET 1min 8s left  Thu 2026-11-05 16:50:01 CET 49s ago   helios-suivi-publish.timer   helios-suivi-publish.service
+Fri 2026-11-06 03:15:00 CET 10h left      -                           -         helios-suivi-backup.timer    helios-suivi-backup.service

@@ -1,0 +1,28 @@
+=== Prerequis (etat de fin du TP3) — 2026-11-05 16:26:08 ===
+$ systemctl is-active helios-collect.service ; wc -l < /var/lib/helios/telemetry.csv ; sleep 6 ; wc -l < /var/lib/helios/telemetry.csv
+active
+282
+283
+$ systemctl cat helios.target | head -6
+# /etc/systemd/system/helios.target
+[Unit]
+Description=Pile applicative Helios
+Requires=multi-user.target
+After=multi-user.target
+AllowIsolate=no
+$ firewall-cmd --get-default-zone ; firewall-cmd --get-active-zones
+drop
+drop
+  interfaces: enp0s3 enp0s10 enp0s9
+internal
+  interfaces: bond0 bond0.42
+work
+  interfaces: enp0s8
+  sources: 192.168.56.0/24
+$ sshd -T | grep -E '^(port|allowgroups|passwordauthentication) '
+port 2242
+passwordauthentication no
+allowgroups ssh-admins
+$ systemctl is-active helios-watch-auth.timer ; getenforce
+active
+Enforcing

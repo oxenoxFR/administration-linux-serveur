@@ -1,0 +1,26 @@
+=== E3 — Script de publication : codes retour — 2026-11-05 16:33:56 ===
+$ runuser -u helios-suivi -- /usr/local/sbin/helios-suivi-publish.sh ; echo "rc=$?   (attendu 0)"
+rc=0   (attendu 0)
+$ flock /usr/local/sbin/helios-suivi-publish.sh sleep 4 & sleep 1 ; runuser -u helios-suivi -- /usr/local/sbin/helios-suivi-publish.sh ; echo "rc=$?   (attendu 2 : verrou deja pris)" ; wait
+rc=2   (attendu 2 : verrou deja pris)
+$ runuser -u nadia -- /usr/local/sbin/helios-suivi-publish.sh ; echo "rc=$?   (attendu 3 : www non inscriptible pour nadia)"
+rc=3   (attendu 3 : www non inscriptible pour nadia)
+$ printf 'pas,une,mesure\n' > /tmp/tele-invalide.csv ; chmod 644 /tmp/tele-invalide.csv ; runuser -u helios-suivi -- env HELIOS_TELEMETRY=/tmp/tele-invalide.csv /usr/local/sbin/helios-suivi-publish.sh ; echo "rc=$?   (attendu 1 : ligne invalide)" ; rm -f /tmp/tele-invalide.csv
+rc=1   (attendu 1 : ligne invalide)
+$ python3 -m json.tool /srv/helios/suivi/www/etat.json ; ls -l /srv/helios/suivi/www/etat.json
+{
+    "genere": "2026-11-05T16:33:56+01:00",
+    "hote": "srv-core",
+    "derniere_mesure": "2026-11-05T16:33:54+01:00",
+    "charge_1min": 0.16,
+    "mem_dispo_ko": 1372768,
+    "mesures": 374
+}
+-rw-r-----+ 1 helios-suivi suivi 184 Nov  5 16:33 /srv/helios/suivi/www/etat.json
+$ journalctl -t helios-suivi-publish -n 6 --no-pager -o short-iso | cut -c1-118
+2026-11-05T16:33:57+0100 srv-core helios-suivi-publish[4556]: une autre instance tourne deja
+2026-11-05T16:33:57+0100 srv-core helios-suivi-publish[4557]: fin d'execution rc=2
+2026-11-05T16:34:00+0100 srv-core helios-suivi-publish[4572]: telemetrie illisible : /var/lib/helios/telemetry.csv
+2026-11-05T16:34:00+0100 srv-core helios-suivi-publish[4575]: fin d'execution rc=3
+2026-11-05T16:34:00+0100 srv-core helios-suivi-publish[4596]: derniere ligne de telemetrie invalide : 'pas,une,mesure'
+2026-11-05T16:34:00+0100 srv-core helios-suivi-publish[4597]: fin d'execution rc=1

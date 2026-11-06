@@ -1,0 +1,11 @@
+[OK] E1 — Comptes et groupe
+[OK] E2 — Repertoire publie (setgid + ACL)
+[OK] E3 — Publication de etat.json
+[OK] E4 — Units systemd (portail durci, publication)
+[OK] E5 — Delegation sudo
+[OK] E6 — Pare-feu (8080 seulement dans internal)
+[OK] E7 — Non-regression de la securite
+[OK] E8 — Supervision Zabbix + sar
+[OK] E9 — Sauvegarde et restauration
+Bilan : 9/9
+rc=0

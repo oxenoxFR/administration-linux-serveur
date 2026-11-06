@@ -1,0 +1,20 @@
+Nov 05 21:12:01 srv-core systemd[1]: Starting Publication de l'etat du collecteur Helios (etat.json)...
+Nov 05 21:12:01 srv-core helios-suivi-publish[17993]: etat.json publie : derniere mesure 2026-11-05T21:11:57+01:00, charge 0.01, 3636 mesures
+Nov 05 21:12:01 srv-core helios-suivi-publish[17994]: fin d'execution rc=0
+Nov 05 21:12:01 srv-core systemd[1]: helios-suivi-publish.service: Deactivated successfully.
+Nov 05 21:12:01 srv-core systemd[1]: Finished Publication de l'etat du collecteur Helios (etat.json).
+Nov 05 21:14:01 srv-core systemd[1]: Starting Publication de l'etat du collecteur Helios (etat.json)...
+Nov 05 21:14:01 srv-core systemd[1]: helios-suivi-publish.service: Deactivated successfully.
+Nov 05 21:14:01 srv-core systemd[1]: Finished Publication de l'etat du collecteur Helios (etat.json).
+Nov 05 21:16:01 srv-core systemd[1]: Starting Publication de l'etat du collecteur Helios (etat.json)...
+Nov 05 21:16:01 srv-core helios-suivi-publish[18239]: fin d'execution rc=0
+Nov 05 21:16:01 srv-core systemd[1]: helios-suivi-publish.service: Deactivated successfully.
+Nov 05 21:16:01 srv-core systemd[1]: Finished Publication de l'etat du collecteur Helios (etat.json).
+Nov 05 21:18:01 srv-core systemd[1]: Starting Publication de l'etat du collecteur Helios (etat.json)...
+Nov 05 21:18:01 srv-core helios-suivi-publish[18412]: fin d'execution rc=0
+Nov 05 21:18:01 srv-core systemd[1]: helios-suivi-publish.service: Deactivated successfully.
+Nov 05 21:18:01 srv-core systemd[1]: Finished Publication de l'etat du collecteur Helios (etat.json).
+Nov 05 21:20:01 srv-core systemd[1]: Starting Publication de l'etat du collecteur Helios (etat.json)...
+Nov 05 21:20:01 srv-core helios-suivi-publish[19436]: fin d'execution rc=0
+Nov 05 21:20:01 srv-core systemd[1]: helios-suivi-publish.service: Deactivated successfully.
+Nov 05 21:20:01 srv-core systemd[1]: Finished Publication de l'etat du collecteur Helios (etat.json).

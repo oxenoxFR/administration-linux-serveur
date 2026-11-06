@@ -1,0 +1,38 @@
+=== E10 (bonus) — Audit de conformite — 2026-11-05 16:41:10 ===
+$ /usr/local/sbin/helios-suivi-audit.sh ; echo rc=$?
+[OK] E1 — Comptes et groupe
+[KO] E2 — Repertoire publie (setgid + ACL) : index.html absent
+[OK] E3 — Publication de etat.json
+[OK] E4 — Units systemd (portail durci, publication)
+[OK] E5 — Delegation sudo
+[OK] E6 — Pare-feu (8080 seulement dans internal)
+[OK] E7 — Non-regression de la securite
+[OK] E8 — Supervision Zabbix + sar
+[KO] E9 — Sauvegarde et restauration : commande absente : tar;aucune sauvegarde dans /srv/helios/archives/suivi
+Bilan : 7/9
+rc=1
+$ systemctl stop helios-suivi.service ; /usr/local/sbin/helios-suivi-audit.sh | grep -E 'KO|Bilan' | cut -c1-124 ; echo "rc=${PIPESTATUS[0]}   (portail arrete)" ; systemctl start helios-suivi.service
+[KO] E2 — Repertoire publie (setgid + ACL) : index.html absent
+[KO] E4 — Units systemd (portail durci, publication) : portail helios-suivi.service arrete;GET / -> 000;GET /etat.json -> 
+[KO] E8 — Supervision Zabbix + sar : helios.suivi.http = 000
+[KO] E9 — Sauvegarde et restauration : commande absente : tar;aucune sauvegarde dans /srv/helios/archives/suivi
+Bilan : 5/9
+rc=1   (portail arrete)
+=== E10 (bonus) — Audit de conformite — 2026-11-05 16:50:01 ===
+$ /usr/local/sbin/helios-suivi-audit.sh ; echo rc=$?
+[OK] E1 — Comptes et groupe
+[OK] E2 — Repertoire publie (setgid + ACL)
+[OK] E3 — Publication de etat.json
+[OK] E4 — Units systemd (portail durci, publication)
+[OK] E5 — Delegation sudo
+[OK] E6 — Pare-feu (8080 seulement dans internal)
+[OK] E7 — Non-regression de la securite
+[OK] E8 — Supervision Zabbix + sar
+[OK] E9 — Sauvegarde et restauration
+Bilan : 9/9
+rc=0
+$ systemctl stop helios-suivi.service ; /usr/local/sbin/helios-suivi-audit.sh | grep -E 'KO|Bilan' | cut -c1-124 ; echo "rc=${PIPESTATUS[0]}   (portail arrete)" ; systemctl start helios-suivi.service
+[KO] E4 — Units systemd (portail durci, publication) : portail helios-suivi.service arrete;GET / -> 000;GET /etat.json -> 
+[KO] E8 — Supervision Zabbix + sar : helios.suivi.http = 000
+Bilan : 7/9
+rc=1   (portail arrete)

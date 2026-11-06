@@ -1,0 +1,42 @@
+=== E2 — Repertoire publie : setgid et ACL (1/2) — 2026-11-05 16:33:21 ===
+$ ls -ld /srv/helios /srv/helios/suivi /srv/helios/suivi/www
+drwxr-xr-x. 6 root root  60 Nov  5 16:33 /srv/helios
+drwxr-x---+ 3 root suivi 17 Nov  5 16:33 /srv/helios/suivi
+drwxrws---+ 2 root suivi  6 Nov  5 16:33 /srv/helios/suivi/www
+$ getfacl -p /srv/helios/suivi/www
+# file: /srv/helios/suivi/www
+# owner: root
+# group: suivi
+# flags: -s-
+user::rwx
+user:helios-suivi:rwx
+user:zabbix:--x
+group::rwx
+mask::rwx
+other::---
+default:user::rwx
+default:user:helios-suivi:r-x
+default:group::rwx
+default:mask::rwx
+default:other::---
+
+=== E2 — Fichiers crees par lea, et qui peut quoi (2/2) — 2026-11-05 16:33:38 ===
+$ su - lea -c umask ; ls -l /srv/helios/suivi/www/index.html ; getfacl -p --omit-header /srv/helios/suivi/www/index.html
+0027
+-rw-rw----+ 1 lea suivi 386 Nov  5 16:33 /srv/helios/suivi/www/index.html
+user::rw-
+user:helios-suivi:r-x	#effective:r--
+group::rwx	#effective:rw-
+mask::rw-
+other::---
+
+$ su - lea -c 'umask 077 ; touch /srv/helios/suivi/www/essai-umask077' ; ls -l /srv/helios/suivi/www/essai-umask077 ; rm -f /srv/helios/suivi/www/essai-umask077
+-rw-rw----+ 1 lea suivi 0 Nov  5 16:33 /srv/helios/suivi/www/essai-umask077
+$ runuser -u helios-suivi -- cat /srv/helios/suivi/www/index.html > /dev/null && echo 'helios-suivi lit index.html : OK'
+helios-suivi lit index.html : OK
+$ runuser -u nadia -- cat /srv/helios/suivi/www/index.html
+cat: /srv/helios/suivi/www/index.html: Permission denied
+$ runuser -u zabbix -- ls /srv/helios/suivi/www
+ls: cannot open directory '/srv/helios/suivi/www': Permission denied
+$ runuser -u zabbix -- stat -c '%n : %U:%G %A' /srv/helios/suivi/www/index.html
+/srv/helios/suivi/www/index.html : lea:suivi -rw-rw----

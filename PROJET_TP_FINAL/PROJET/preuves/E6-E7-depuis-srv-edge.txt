@@ -1,0 +1,29 @@
+=== PROJET E6/E7 — tests depuis srv-edge — 2026-11-05 16:37:10 ===
+$ ip -br -4 addr | grep -v '^lo'
+enp0s3           UP             10.0.2.15/24 
+enp0s8           UP             192.168.56.11/24 
+enp0s9           UP             10.42.0.11/24 
+enp0s9.42@enp0s9 UP             10.42.42.11/24 
+$ curl -s -o /dev/null -m 5 -w 'reseau metier : GET http://10.42.0.10:8080/etat.json -> %{http_code}\n' http://10.42.0.10:8080/etat.json
+reseau metier : GET http://10.42.0.10:8080/etat.json -> 200
+$ curl -s -m 5 http://10.42.0.10:8080/etat.json
+{
+  "genere": "2026-11-05T16:36:03+01:00",
+  "hote": "srv-core",
+  "derniere_mesure": "2026-11-05T16:36:01+01:00",
+  "charge_1min": 0.28,
+  "mem_dispo_ko": 1345076,
+  "mesures": 399
+}
+$ curl -s -o /dev/null -m 5 -w 'reseau admin  : GET http://192.168.56.10:8080/etat.json -> %{http_code}\n' http://192.168.56.10:8080/etat.json ; echo "rc curl=$?  (attendu != 0)"
+reseau admin  : GET http://192.168.56.10:8080/etat.json -> 000
+rc curl=7  (attendu != 0)
+$ timeout 3 bash -c 'exec 3<>/dev/tcp/192.168.56.10/8080' ; echo "rc=$?  (nc absent de srv-edge : meme test avec /dev/tcp, attendu != 0)"
+bash: connect: Aucun chemin d'accès pour atteindre l'hôte cible
+bash: ligne 1: /dev/tcp/192.168.56.10/8080: Aucun chemin d'accès pour atteindre l'hôte cible
+rc=1  (nc absent de srv-edge : meme test avec /dev/tcp, attendu != 0)
+$ ssh -p 2242 -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=5 lea@192.168.56.10 true ; echo "rc=$?  (E7 : lea refusee, attendu 255)"
+*** Serveur Helios Logistique - acces strictement reserve ***
+Toute connexion est journalisee.
+lea@192.168.56.10: Permission denied (publickey).
+rc=255  (E7 : lea refusee, attendu 255)

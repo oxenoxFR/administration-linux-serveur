@@ -1,0 +1,21 @@
+=== E5 — Delegation sudo pour le groupe suivi — 2026-11-05 16:35:20 ===
+$ visudo -c -f /tmp/p/configs/92-helios-suivi && install -m 0440 -o root -g root /tmp/p/configs/92-helios-suivi /etc/sudoers.d/92-helios-suivi && ls -l /etc/sudoers.d/92-helios-suivi && visudo -c | tail -1
+/tmp/p/configs/92-helios-suivi: parsed OK
+-r--r-----. 1 root root 823 Nov  5 16:35 /etc/sudoers.d/92-helios-suivi
+/etc/sudoers.d/92-helios-suivi: parsed OK
+$ sudo -l -U lea | sed -n '/may run the following/,$p'
+User lea may run the following commands on srv-core:
+    (root) /usr/bin/systemctl restart helios-suivi.service, /usr/bin/systemctl status --no-pager helios-suivi.service, /usr/bin/systemctl start helios-suivi-publish.service, /usr/bin/journalctl -u helios-suivi.service -n 100 --no-pager, /usr/bin/journalctl -u helios-suivi-publish.service -n 100 --no-pager
+$ sudo -l -U lea /usr/bin/systemctl restart sshd ; echo "rc=$?  (rien de liste = refuse)"
+rc=1  (rien de liste = refuse)
+$ sudo -l -U lea /usr/bin/journalctl --vacuum-time=1s ; echo "rc=$?  (refuse : aucune option ajoutee possible)"
+rc=1  (refuse : aucune option ajoutee possible)
+$ printf '%s\n' "$LEA_MDP" | su - lea -c 'sudo -S -p "" /usr/bin/systemctl restart helios-suivi.service' 2>&1 | tail -2 ; echo "essai reel en lea : restart helios-suivi rc=${PIPESTATUS[1]}"
+Pour des raisons de sécurité, le mot de passe que vous tapez ne sera pas visible.
+
+essai reel en lea : restart helios-suivi rc=0
+$ printf '%s\n' "$LEA_MDP" | su - lea -c 'sudo -S -p "" /usr/bin/systemctl restart sshd' 2>&1 | tail -1
+Désolé, l'utilisateur lea n'est pas autorisé à exécuter « /usr/bin/systemctl restart sshd » en tant que root sur srv-core.
+$ printf '%s\n' "$LEA_MDP" | su - lea -c 'sudo -S -p "" /usr/bin/journalctl -u helios-suivi.service -n 100 --no-pager' 2>&1 | tail -2 | cut -c1-118
+nov. 05 16:35:21 srv-core systemd[1]: Stopped Portail de suivi des tournees Helios (HTTP 8080, lecture seule).
+nov. 05 16:35:21 srv-core systemd[1]: Started Portail de suivi des tournees Helios (HTTP 8080, lecture seule).

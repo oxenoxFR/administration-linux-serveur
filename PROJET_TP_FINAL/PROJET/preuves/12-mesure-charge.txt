@@ -1,0 +1,18 @@
+=== Mesure sous charge : 2000 requetes sur etat.json — 2026-11-05 16:39:57 ===
+$ systemctl show -p CPUUsageNSec -p MemoryCurrent helios-suivi.service ; grep -E 'nr_throttled|throttled_usec' /sys/fs/cgroup/system.slice/helios-suivi.service/cpu.stat
+MemoryCurrent=10178560
+CPUUsageNSec=235572000
+nr_throttled 1
+throttled_usec 9090
+$ echo "2000 requetes en 43.7 s" ; systemctl show -p CPUUsageNSec -p MemoryCurrent helios-suivi.service ; grep -E 'nr_throttled|throttled_usec' /sys/fs/cgroup/system.slice/helios-suivi.service/cpu.stat
+2000 requetes en 43.7 s
+MemoryCurrent=10203136
+CPUUsageNSec=4592782000
+nr_throttled 1
+throttled_usec 9090
+$ echo "CPU du portail pendant la charge : 10.0 % d un coeur (quota : 50 %)"
+CPU du portail pendant la charge : 10.0 % d un coeur (quota : 50 %)
+$ head -3 /root/PROJET/preuves/12-sar-u.txt | tail -1 ; grep -E '^Average' /root/PROJET/preuves/12-sar-u.txt ; sort -k3 -n -r /root/PROJET/preuves/12-sar-u.txt | grep -E '^[0-9]' | head -1 | sed 's/^/pic : /'
+16:39:58        CPU     %user     %nice   %system   %iowait    %steal     %idle
+Average:        all     14.62      0.12     45.74      0.14      0.00     39.38
+pic : 16:40:04        all     16.36      0.00     52.12      0.00      0.00     31.52

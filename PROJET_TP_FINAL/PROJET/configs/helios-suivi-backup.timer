@@ -1,0 +1,13 @@
+# /etc/systemd/system/helios-suivi-backup.timer
+[Unit]
+Description=Sauvegarde du portail de suivi chaque jour a 03h15
+
+[Timer]
+OnCalendar=*-*-* 03:15:00
+AccuracySec=1min
+# Rattrape l'execution manquee si le serveur etait eteint a 03h15
+Persistent=true
+Unit=helios-suivi-backup.service
+
+[Install]
+WantedBy=timers.target

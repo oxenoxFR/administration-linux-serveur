@@ -1,0 +1,20 @@
+# /etc/systemd/system/helios-suivi-backup.service — sauvegarde quotidienne du portail
+[Unit]
+Description=Sauvegarde du portail de suivi Helios
+RequiresMountsFor=/srv/helios/archives
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/helios-suivi-backup.sh
+SuccessExitStatus=2
+Nice=10
+IOSchedulingClass=idle
+ProtectSystem=strict
+ReadWritePaths=/srv/helios/archives/suivi /run/lock
+ProtectHome=yes
+PrivateTmp=yes
+PrivateNetwork=yes
+NoNewPrivileges=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes

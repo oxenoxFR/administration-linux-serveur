@@ -1,0 +1,12 @@
+# /etc/systemd/system/helios-suivi-publish.timer
+[Unit]
+Description=Publie etat.json toutes les 2 minutes
+
+[Timer]
+OnCalendar=*:0/2
+AccuracySec=10s
+Persistent=no
+Unit=helios-suivi-publish.service
+
+[Install]
+WantedBy=timers.target

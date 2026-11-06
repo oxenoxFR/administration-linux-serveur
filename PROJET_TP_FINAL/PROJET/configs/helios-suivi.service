@@ -1,0 +1,55 @@
+# /etc/systemd/system/helios-suivi.service — portail HTTP de suivi des tournees (projet BTC2)
+[Unit]
+Description=Portail de suivi des tournees Helios (HTTP 8080, lecture seule)
+Documentation=https://wiki.helios.lan/suivi
+After=network.target helios-collect.service
+# Arreter ou redemarrer helios.target agit aussi sur le portail
+PartOf=helios.target
+
+[Service]
+Type=simple
+User=helios-suivi
+Group=helios-suivi
+ExecStart=/usr/bin/python3 -m http.server 8080 --bind 0.0.0.0 --directory /srv/helios/suivi/www
+Restart=on-failure
+RestartSec=2s
+TimeoutStopSec=10s
+
+# Ressources
+MemoryMax=128M
+CPUQuota=50%
+
+# Durcissement : le serveur web ne doit ecrire NULLE PART
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+ReadOnlyPaths=/tmp /var/tmp -/dev/shm
+PrivateDevices=yes
+DevicePolicy=closed
+UMask=0077
+NoNewPrivileges=yes
+CapabilityBoundingSet=
+AmbientCapabilities=
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+ProtectProc=invisible
+ProcSubset=pid
+RestrictNamespaces=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+RemoveIPC=yes
+KeyringMode=private
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+SystemCallArchitectures=native
+SystemCallFilter=@system-service
+SystemCallFilter=~@privileged @resources
+SystemCallErrorNumber=EPERM
+
+[Install]
+WantedBy=helios.target

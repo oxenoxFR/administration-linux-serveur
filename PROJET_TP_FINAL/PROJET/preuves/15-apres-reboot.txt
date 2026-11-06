@@ -1,0 +1,19 @@
+=== Apres redemarrage : persistance et audit — 2026-11-05 21:18:26 ===
+$ uptime -s ; journalctl --list-boots --no-pager | tail -2
+2026-11-05 16:51:34
+ -1 16b83d5a1a2d4f998b420f358676a00c Thu 2026-11-05 16:00:14 CET Thu 2026-11-05 16:51:23 CET
+  0 42e824a563ae490f9f15d5bedb58352e Thu 2026-11-05 16:51:39 CET Thu 2026-11-05 21:18:06 CET
+$ systemctl is-active helios-suivi.service helios-suivi-publish.timer helios-suivi-backup.timer zabbix-agent2 sysstat-collect.timer helios-collect.service helios-watch-auth.timer firewalld | paste -sd' '
+active active active active active active active active
+$ /usr/local/sbin/helios-suivi-audit.sh ; echo rc=$?
+[OK] E1 — Comptes et groupe
+[OK] E2 — Repertoire publie (setgid + ACL)
+[OK] E3 — Publication de etat.json
+[OK] E4 — Units systemd (portail durci, publication)
+[OK] E5 — Delegation sudo
+[OK] E6 — Pare-feu (8080 seulement dans internal)
+[OK] E7 — Non-regression de la securite
+[OK] E8 — Supervision Zabbix + sar
+[OK] E9 — Sauvegarde et restauration
+Bilan : 9/9
+rc=0

@@ -1,0 +1,19 @@
+=== E8 — Supervision : sondes Zabbix et sar — 2026-11-05 16:38:20 ===
+$ grep '^UserParameter' /etc/zabbix/zabbix_agent2.d/helios-suivi.conf | cut -c1-124
+UserParameter=helios.suivi.http,curl -s -o /dev/null -m 5 -w '%{http_code}' http://127.0.0.1:8080/etat.json
+UserParameter=helios.suivi.age,t=$(stat -c %Y /srv/helios/suivi/www/etat.json) && echo $(( $(date +%s) - t ))
+$ ps -eo user,label,cmd | grep '[z]abbix_agent2' | cut -c1-110
+zabbix   system_u:system_r:unconfined_service_t:s0 /usr/sbin/zabbix_agent2 -c /etc/zabbix/zabbix_agent2.conf
+$ zabbix_get -s 127.0.0.1 -k helios.suivi.http ; zabbix_get -s 127.0.0.1 -k helios.suivi.age
+200
+24
+$ runuser -u zabbix -- stat -c '%n : %s octets, modifie le %y' /srv/helios/suivi/www/etat.json ; runuser -u zabbix -- ls /srv/helios/suivi/www
+/srv/helios/suivi/www/etat.json : 184 octets, modifie le 2026-11-05 16:38:00.888977490 +0100
+ls: cannot open directory '/srv/helios/suivi/www': Permission denied
+$ systemctl is-active zabbix-agent2 sysstat-collect.timer ; systemctl is-enabled zabbix-agent2 ; sar -u 1 2 | tail -3
+active
+active
+enabled
+16:38:25        all      0.00      0.00      3.52      0.00      0.00     96.48
+16:38:26        all      0.00      0.00      4.04      1.01      0.00     94.95
+Average:        all      0.00      0.00      3.78      0.50      0.00     95.72

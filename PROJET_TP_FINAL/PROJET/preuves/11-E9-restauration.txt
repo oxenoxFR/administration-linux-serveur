@@ -1,0 +1,76 @@
+=== E9.5 — Restauration prouvee — 2026-11-05 16:39:39 ===
+$ t0=$(date +%s.%N) ; tar --acls --xattrs --selinux -xzpf  -C /root/restauration-test && echo "(a) archive extraite dans /root/restauration-test en $(depuis $t0) s"
+bash: line 1: tar: command not found
+$ diff <(cd / && getfacl -R -p srv/helios/suivi/www 2>/dev/null | grep -v 'file: .*etat') <(cd /root/restauration-test && getfacl -R -p srv/helios/suivi/www 2>/dev/null | grep -v 'file: .*etat') && echo '(a) ACL de www : identiques entre la production et l archive'
+1,33d0
+< # file: srv/helios/suivi/www
+< # owner: root
+< # group: suivi
+< # flags: -s-
+< user::rwx
+< user:helios-suivi:rwx
+< user:zabbix:--x
+< group::rwx
+< mask::rwx
+< other::---
+< default:user::rwx
+< default:user:helios-suivi:r-x
+< default:group::rwx
+< default:mask::rwx
+< default:other::---
+< 
+< # file: srv/helios/suivi/www/index.html
+< # owner: lea
+< # group: suivi
+< user::rw-
+< user:helios-suivi:r-x	#effective:r--
+< group::rwx	#effective:rw-
+< mask::rw-
+< other::---
+< 
+< # owner: helios-suivi
+< # group: suivi
+< user::rw-
+< user:helios-suivi:r-x	#effective:r--
+< group::rwx	#effective:r--
+< mask::r--
+< other::---
+< 
+$ getfacl -p /srv/helios/suivi/www/index.html > /root/acl-index-avant.txt ; sha256sum /srv/helios/suivi/www/index.html > /root/sha-index-avant.txt ; rm -f /srv/helios/suivi/www/index.html ; echo '(b) incident : index.html supprime' ; curl -s http://127.0.0.1:8080/ | grep -o '<title>.*</title>'
+(b) incident : index.html supprime
+<title>Directory listing for /</title>
+$ t0=$(date +%s.%N) ; tar --acls --xattrs --selinux -xzpf  -C / srv/helios/suivi/www/index.html ; echo "(b) index.html restaure seul en $(depuis $t0) s"
+bash: line 1: tar: command not found
+(b) index.html restaure seul en 0.01 s
+$ ls -l /srv/helios/suivi/www/index.html ; diff <(getfacl -p /srv/helios/suivi/www/index.html) /root/acl-index-avant.txt && echo 'ACL identiques a avant l incident' ; sha256sum -c /root/sha-index-avant.txt ; curl -s http://127.0.0.1:8080/ | grep -o '<title>.*</title>'
+ls: cannot access '/srv/helios/suivi/www/index.html': No such file or directory
+getfacl: /srv/helios/suivi/www/index.html: No such file or directory
+0a1,9
+> # file: /srv/helios/suivi/www/index.html
+> # owner: lea
+> # group: suivi
+> user::rw-
+> user:helios-suivi:r-x	#effective:r--
+> group::rwx	#effective:rw-
+> mask::rw-
+> other::---
+> 
+sha256sum: /srv/helios/suivi/www/index.html: No such file or directory
+/srv/helios/suivi/www/index.html: FAILED open or read
+sha256sum: WARNING: 1 listed file could not be read
+<title>Directory listing for /</title>
+=== E9.5 — Restauration prouvee — 2026-11-05 16:49:45 ===
+$ t0=$(date +%s.%N) ; tar --acls --xattrs --selinux -xzpf /srv/helios/archives/suivi/suivi-20261105-164857.tar.gz -C /root/restauration-test && echo "(a) archive extraite dans /root/restauration-test en $(depuis $t0) s"
+(a) archive extraite dans /root/restauration-test en 0.03 s
+$ diff <(cd / && getfacl -R -p srv/helios/suivi/www 2>/dev/null | grep -v 'file: .*etat') <(cd /root/restauration-test && getfacl -R -p srv/helios/suivi/www 2>/dev/null | grep -v 'file: .*etat') && echo '(a) ACL de www : identiques entre la production et l archive'
+(a) ACL de www : identiques entre la production et l archive
+$ getfacl -p /srv/helios/suivi/www/index.html > /root/acl-index-avant.txt ; sha256sum /srv/helios/suivi/www/index.html > /root/sha-index-avant.txt ; rm -f /srv/helios/suivi/www/index.html ; echo '(b) incident : index.html supprime' ; curl -s http://127.0.0.1:8080/ | grep -o '<title>.*</title>'
+(b) incident : index.html supprime
+<title>Directory listing for /</title>
+$ t0=$(date +%s.%N) ; tar --acls --xattrs --selinux -xzpf /srv/helios/archives/suivi/suivi-20261105-164857.tar.gz -C / srv/helios/suivi/www/index.html ; echo "(b) index.html restaure seul en $(depuis $t0) s"
+(b) index.html restaure seul en 0.03 s
+$ ls -l /srv/helios/suivi/www/index.html ; diff <(getfacl -p /srv/helios/suivi/www/index.html) /root/acl-index-avant.txt && echo 'ACL identiques a avant l incident' ; sha256sum -c /root/sha-index-avant.txt ; curl -s http://127.0.0.1:8080/ | grep -o '<title>.*</title>'
+-rw-rw----+ 1 lea suivi 386 Nov  5 16:48 /srv/helios/suivi/www/index.html
+ACL identiques a avant l incident
+/srv/helios/suivi/www/index.html: OK
+<title>Suivi des tournees - Helios Logistique</title>

@@ -1,0 +1,25 @@
+=== E1 — Comptes et groupe — 2026-11-05 16:33:04 ===
+$ getent group suivi ; id lea ; getent passwd lea helios-suivi
+suivi:x:5003:
+uid=5104(lea) gid=5003(suivi) groups=5003(suivi)
+lea:x:5104:5003:Lea Fabre - responsable suivi des tournees:/home/lea:/bin/bash
+helios-suivi:x:994:993:Portail de suivi des tournees:/srv/helios/suivi:/sbin/nologin
+$ chage -l lea
+Last password change					: Nov 05, 2026
+Password expires					: Feb 03, 2027
+Password inactive					: Feb 10, 2027
+Account expires						: never
+Minimum number of days between password change		: 1
+Maximum number of days between password change		: 90
+Number of days of warning before password expires	: 14
+$ id -nG lea | tr ' ' '\n' | grep -xE 'wheel|ssh-admins' || echo 'lea : ni wheel ni ssh-admins'
+lea : ni wheel ni ssh-admins
+$ id helios-suivi ; ls -d /home/helios-suivi ; ls /home
+uid=994(helios-suivi) gid=993(helios-suivi) groups=993(helios-suivi)
+ls: cannot access '/home/helios-suivi': No such file or directory
+audit-ext
+david
+julien
+lea
+nadia
+tarek

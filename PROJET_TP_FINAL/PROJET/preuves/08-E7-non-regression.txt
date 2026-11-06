@@ -1,0 +1,22 @@
+=== E7 — Non-regression de la securite — 2026-11-05 16:37:59 ===
+$ sshd -T | grep -E '^(port|permitrootlogin|passwordauthentication|allowgroups) '
+port 2242
+permitrootlogin no
+passwordauthentication no
+allowgroups ssh-admins
+$ ssh -p 2242 -o BatchMode=yes -o StrictHostKeyChecking=no -o ConnectTimeout=5 lea@10.42.0.10 true ; echo "rc=$?  (attendu 255 : lea refusee)"
+Warning: Permanently added '[10.42.0.10]:2242' (ED25519) to the list of known hosts.
+*** Serveur Helios Logistique - acces strictement reserve ***
+Toute connexion est journalisee.
+lea@10.42.0.10: Permission denied (publickey).
+rc=255  (attendu 255 : lea refusee)
+$ journalctl -u sshd --since today --no-pager -o short-iso | grep -E 'User lea from' | tail -3 | cut -c1-124
+2026-11-05T16:37:10+0100 srv-core sshd-session[5262]: User lea from 192.168.56.11 not allowed because none of user's groups 
+2026-11-05T16:37:59+0100 srv-core sshd-session[5318]: User lea from 10.42.0.10 not allowed because none of user's groups are
+$ systemctl is-active helios-watch-auth.timer firewalld ; getenforce ; ls -d /var/log/journal/$(cat /etc/machine-id) ; journalctl --list-boots --no-pager | tail -2
+active
+active
+Enforcing
+/var/log/journal/9d46c52452584943a86d300c41a7f996
+ -1 d243de36956f4340969e422508c79e84 Wed 2026-11-04 15:00:36 CET Wed 2026-11-04 15:56:09 CET
+  0 16b83d5a1a2d4f998b420f358676a00c Thu 2026-11-05 16:00:14 CET Thu 2026-11-05 16:38:00 CET
